@@ -1,0 +1,139 @@
+---
+title: "RNODE"
+author: "Daniel YM Nakamura, Ward Wheeler, Taran Grant"
+date: "November 13, 2024"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1. Preamble
+
+Tutorial to demonstrate the main functions available in the R package RNODE. This tutorial is organized in two sections related to preprocessing and post-processing of phylogenetic trees.
+
+```{r warning=F, message=F}
+# Load the package
+library(ggplot2)
+library(RNODE)
+```
+
+# 2. Preprocessing analyses
+
+## 2.1 prepUnaligned: Unaligned sequence preprocessing
+
+## 2.2 prepOrdered: Split a Nexus morphological matrix into partitions of ordered and unordered characters
+
+```{r}
+# Data input of list of ordered characters
+list_ordered = c(20, 23, 27, 30, 35, 36, 41, 42, 44, 46, 48, 59, 65, 75, 78, 79, 89, 99, 112, 117, 134, 146, 157, 159, 171, 185, 191, 192, 193, 196, 218, 228, 229, 230, 237, 263, 266, 288, 296, 299, 304, 343, 347, 349)
+
+RNODE::splitOrdFromUnord(input="../../../Other/OLD/017/iqtree/017_MORPH_data.nexus", output_index = "teste", list_ordered, invariant = T)
+
+```
+
+# 3. Post-processing analyses
+
+## 3.1 *compareNodes*
+
+Comparisons between phylogenetic trees are usually performed using topological distance metrics (e.g. Robinson-Foulds and SPR distances) but comparisons of support values between corresponding nodes are usually neglected. We propose the function **compareNodes** to create a dataframe with node labels, descendants, and support values of shared clades between two phylogenetic trees, which facilitates descriptive and statistical comparisons of support values between corresponding nodes. Two examples are provided below.
+
+First, we can demonstrate this function using two simulated trees with the same composition of terminals but different topologies. Notice that *composition = T* will show the composition of each clade in the output dataframe.
+
+```{r}
+# Simulate two trees
+set.seed(44)
+a = pbtree(n=7) # initial tree a
+node_labels = sample(1:100, a$Nnode, replace = TRUE) # generate random node labels as integers to tree a
+a$node.label = node_labels # add the node labels to tree a
+set.seed(88)
+b = pbtree(n=7) # initial tree b
+node_labels = sample(1:100, b$Nnode, replace = TRUE) # Generate random node labels as integers to tree a
+b$node.label = node_labels # Set the node labels to tree b
+
+# Visualize trees
+layout(c(1,2))
+plotTree(ladderize(a, right = T),node.numbers=T, color="blue")
+nodelabels(a$node.label,
+           adj=c(1.9, 1.7), # horizontal and vertical position
+           frame="none")
+plotTree(ladderize(b, right = T),node.numbers=T, color="red")
+nodelabels(b$node.label,
+           adj=c(2, 1.7), # horizontal and vertical position
+           frame="none")
+
+# Run compareNodes
+compareNodes(tree1=a, tree2=b, composition=T)
+```
+
+Second, we can use **compareNodes** to compare two empirical trees in .nwk format estimated in TNT (datasets from Ruane et al. 2015). One tree was estimated with Sanger-based data, whereas the other one was estimated with AHE data. Polytomous nodes and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees.
+
+```{r}
+# Load trees
+Sanger = read.tree("../testdata/Ruane2015_Sanger.tre")
+AHE = read.tree("../testdata/Ruane2015_AHE.tre")
+
+# Visualize trees
+layout(c(1,2))
+plotTree(ladderize(Sanger, right = T),node.numbers=T, color="blue", fsize= 0.6)
+nodelabels(Sanger$node.label,
+           adj=c(1.9, 1.2), # horizontal and vertical position
+           frame="none",
+           cex=0.6)
+plotTree(ladderize(AHE, right = T),node.numbers=T, color="red", fsize=0.6)
+nodelabels(AHE$node.label,
+           adj=c(1.9, 1.2), # horizontal and vertical position
+           frame="none",
+           cex=0.6)
+
+# Run compareNodes
+compareNodes(tree1=Sanger, tree2=AHE, composition=F)
+
+# Alternatively, trees can be saved in PDF:
+# compareNodes(tree1=Sanger, tree2=AHE, composition=F, plotTrees=T, width=8, height=8, fsize=0.6, adj=c(1.9,1.2), cex=0.6)
+```
+
+Third, besides Sanger vs AHE phylogenetic trees, **compareNodes** may be useful to compare trees across optimality criteria (e.g. parsimony vs maximum likelihood), character sampling (e.g. only-molecular vs molecular+phenomic analyses), and taxon sampling (e.g. only-extant vs extant and extinct taxa). For instance, we can plot the relationship between molecular and total evidence trees analyzed in IQ-TREE by Whitcher et al. (2024).
+
+```{r}
+# Load trees
+MOL = read.tree("../testdata/Whitcher2024_ML_MOL.contree")
+TE = read.tree("../testdata/Whitcher2024_ML_TE.contree")
+
+# Run compareNodes
+df = compareNodes(tree1=MOL, tree2=TE)
+
+# Plot the relationship of support between trees
+df = df[-1,]
+df$pc = predict(prcomp(~as.numeric(Support_Tree_1)+as.numeric(Support_Tree_2), df))[,1]
+ggplot(df, aes(as.numeric(Support_Tree_1), as.numeric(Support_Tree_2), color=pc)) +
+  geom_point(size = 5, show.legend = F, alpha=.5) +
+  scale_color_gradient(low = "#0091ff", high = "#f0650e")+
+  theme_minimal() + 
+  labs(x="\nSupport of Tree 1",
+       y="Support of Tree 2\n")
+```
+
+As expected, there is a denser concentration of shared clades with higher values of support, whereas only a few poorly supported clades are shared by both trees.
+
+## 3.2 *uniqueNodes*
+
+In contrast to **compareNodes**, the list of descendants and support values of unique clades from each tree can be assessed using **uniqueNodes**.
+
+```{r}
+
+```
+
+## 3.3 pairwiseTopologies: Creates a pairwise matrix of topological distances; plot using heat map
+
+## 3.4 consensusLabels: Insert branch lengths from a random MPT and support values in the strict consensus tree
+
+## 3.5 iaTNT: Run a TNT analysis for each implied alignment derived from each MPT 
+
+
+# 4. References
+
+Ruane, S., Raxworthy, C. J., Lemmon, A. R., Lemmon, E. M., & Burbrink, F. T. (2015). Comparing species tree estimation with large anchored phylogenomic and small Sanger-sequenced molecular datasets: an empirical study on Malagasy pseudoxyrhophiine snakes. BMC Evolutionary Biology, 15, 1-14.
+
+Whitcher (ADICIONAR)

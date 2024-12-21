@@ -1,0 +1,20 @@
+Package: RNODE
+Type: Package
+Title: An R Package for Pre- and Post-Processing in Tree Alignment Analyses
+Version: 0.1.0
+Author: Daniel Y. M. Nakamura, Taran Grant
+Maintainer: Daniel Y. M. Nakamura <dani_ymn@outlook.com>
+Description: RNODE implements pre-processing and post-processing tools for tree alignment analyses. Among pre-processing tools, RNODE allows (1) the automatic pre-processing of unaligned sequences for POY/PhyG (e.g. inserting breaks, extending incomplete sequences with Ns, and deleting spurious orphan nucleotides) and (2) manipulate different datasets to keep the same taxon sample (e.g. given one molecular and one morphological dataset, concatenate them into a single dataset with shared taxa). Among post-processing tools, RNODE allows (1) the comparison of tree topologies, (2) the comparison of support values of corresponding nodes.
+Imports: ape, phytools, stringr, TreeDist
+Depends: 
+  R (>= 4.2.2),
+  ape,
+  phangorn,
+  phytools,
+  stringr,
+  TreeDist,
+  TreeTools
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
