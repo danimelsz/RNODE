@@ -4,6 +4,12 @@
 
 - Authors: Daniel Y. M. Nakamura, Ward C. Wheeler, Taran Grant
 
+- Contact: dani_ymn@outlook.com
+
 ## Installation
+
+```
+devtools::install_github("danimelsz/RNODE")
+```
 
 ## References
