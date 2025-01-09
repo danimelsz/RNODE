@@ -1,14 +1,12 @@
 #' @title summaryTopologicalDist
 #' @name summaryTopologicalDist
-#' @description suummaryTopDistances() summarizes metrics of topological distances.
+#' @description summaryTopologicalDist() summarizes metrics of topological distances (number of shared and unique clades, normalized Robinson-Foulds, normalized CID, and mean SPR moves).
 #' @author Daniel YM Nakamura
 #'
 #' @param tree1 A .phylo tree that can be loaded using ape::read.tree for NEWICK files or TreeTools::ReadTntTree for TNT files
 #' @param tree2 Another .phylo tree
-#' @param shared Optional. Number of shared clades between trees (default: T)
-#' @param unique Optional. Number of unique clades in tree 1 and 2 (default: T)
-#' @param RF Optional. Calculates the RF distance between unrooted trees based on Penny and Hendy (1985) (default: T)
-#' @param CID Optional. Calculates the CID between trees based on Smith (2020) (default: T)
+#' @param outgroup Optional. Specify outgroup taxa to remove (by default, the function assumes that the user does not want to remove outgroup taxa)
+#' @param root Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, the function assumes that trees share the same root)
 #'
 #' @examples
 #' # Example 1 (Calculates all metrics)
@@ -23,7 +21,6 @@
 #'
 #' @export
 summaryTopologicalDist = function(tree1, tree2,
-                               shared=T, unique=T, RF=T, CID,
                                outgroup=NULL, root=NULL){
   # Initial warnings
   missing_params <- c()
@@ -60,14 +57,17 @@ summaryTopologicalDist = function(tree1, tree2,
   # TOPOLOGICAL DISTANCES #
   #########################
 
+  # Number of polytomies
+  nPolytomies1 = howManyPolytomies(tree1_pruned)
+  nPolytomies2 = howManyPolytomies(tree2_pruned)
+
   # Number of shared clades
   sharedClades = suppressWarnings(suppressMessages(RNODE::sharedNodes(tree1_pruned, tree2_pruned, composition=F, dataframe=F, messages=F, spearman=F)))
   nSharedClades = nrow(sharedClades)
 
   # Number of unique clades
-  uniqueClades = uniqueNodes(tree1_pruned, tree2_pruned, composition=F, dataframe=F)
-  nUniqueClades1 = nrow(uniqueClades[[1]]) # unique in tree 1
-  nUniqueClades2 = nrow(uniqueClades[[2]]) # unique in tree 2
+  nUniqueClades1 = tree1_pruned$Nnode - nSharedClades
+  nUniqueClades2 = tree2_pruned$Nnode - nSharedClades
 
   # RF distance
   unrooted_1 = unroot(tree1_pruned)
@@ -75,16 +75,23 @@ summaryTopologicalDist = function(tree1, tree2,
   RFdist = RF.dist(unrooted_1, unrooted_2, normalize = T)
 
   # CID
-  CID = ClusteringInfoDistance(tree1_pruned, tree2_pruned, normalize = F)
-
-  # SPR moves
-
+  CID = ClusteringInfoDistance(tree1_pruned, tree2_pruned, normalize = T)
 
   # Print
   print(paste("No. shared clades =", nSharedClades))
   print(paste("No. unique clades in tree 1 =", nUniqueClades1))
   print(paste("No. unique clades in tree 2 =", nUniqueClades2))
+  print(paste("Noo. polytomies in tree 1 =", nPolytomies1))
+  print(paste("Noo. polytomies in tree 2 =", nPolytomies2))
   print(paste("Normalized Robinson-Foulds =", RFdist))
   print(paste("Normalized Clustering Information Distance =", CID))
+
+  return(list(nSharedClades=nSharedClades,
+              nUniqueClades1=nUniqueClades1,
+              nUniqueClades2=nUniqueClades2,
+              RFdist=RFdist,
+              CID=CID,
+              nPolytomies1=nPolytomies1,
+              nPolytomies2=nPolytomies2))
 }
 

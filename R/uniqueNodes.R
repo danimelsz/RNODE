@@ -16,7 +16,7 @@
 #' tree2 = read.tree (text="(t1,(t6,(t3,(t4,t5)47)53)94);")
 #' uniqueNodes (tree1, tree2)
 #'
-#' #' # Example 2 (count unique nodes)
+#' # Example 2 (count unique nodes)
 #' tree1 = read.tree (text="(t1,(t2,(t3,(t4,t5)75)32)45);")
 #' tree2 = read.tree (text="(t1,(t6,(t3,(t4,t5)47)53)94);")
 #' nrow (uniqueNodes (tree1, tree2, composition = F))
@@ -26,7 +26,7 @@ uniqueNodes = function(tree1, tree2,
                        composition=T,
                        outgroup=NULL,
                        root=NULL,
-                       dataframe=T){
+                       dataframe=F){
   # Initial warnings
   missing_params <- c()
   if (is.null(tree1)) missing_params <- c(missing_params, "tree1")
@@ -36,6 +36,18 @@ uniqueNodes = function(tree1, tree2,
   } else {
     message("All required parameters provided.") # Proceed with the main functionality if all parameters are provided
   }
+
+  # Check if the input trees contains $node.label (support)
+  if (is.null(tree1$node.label) && is.null(tree2$node.label)) {
+    stop("Input trees with no support values stored at node.labels")
+  } else if (is.null(tree1$node.label) && is.null(tree2$node.label)==F){
+    stop("Input tree 1 with no support values stored at node.labels")
+  } else if (is.null(tree1$node.label)==F && is.null(tree2$node.label)){
+    stop("Input tree 2 with no support values stored at node.labels")
+  } else if (is.null(tree1$node.label)==F && is.null(tree2$node.label)==F) {
+    print("Both trees with support values.")
+  }
+
 
   #################
   # PREPROCESSING #
@@ -84,11 +96,16 @@ uniqueNodes = function(tree1, tree2,
   }
 
   # Dataframe with unique clades in tree 1
-  if (composition){df_unique_Tree1 <- data.frame(Node = m_NA + length(tree1_pruned$tip.label),
-                                Support = m_NA_support_values,
-                                Descendants = c1_NA)}
-  else{df_unique_Tree1 <- data.frame(Node = m_NA + length(tree1_pruned$tip.label),
-                                     Support = m_NA_support_values)}
+  if (composition==T && !is.null(tree1_pruned$node.label)){
+    df_unique_Tree1 <- data.frame(Node = m_NA + length(tree1_pruned$tip.label),
+                                  Support = m_NA_support_values,
+                                  Descendants = c1_NA)}
+  else if (composition==F && !is.null(tree1_pruned$node.label)){
+    df_unique_Tree1 <- data.frame(Node = m_NA + length(tree1_pruned$tip.label),
+                                  Support = m_NA_support_values)}
+  else if (composition==F && is.null(tree1_pruned$node.label)){
+    df_unique_Tree1 <- data.frame(Node = m_NA + length(tree1_pruned$tip.label))
+  }
   if (dataframe){write.table(df_unique_Tree1, "Tree1_unique.clades.tsv", sep = "\t", row.names = FALSE)}
 
   ################################################
@@ -117,11 +134,17 @@ uniqueNodes = function(tree1, tree2,
   }
 
   # Dataframe with unique clades in tree 2
-  if (composition){df_unique_Tree2 <- data.frame(Node = n_NA + length(tree2_pruned$tip.label),
-                                Support = n_NA_support_values,
-                                Descendants = c2_NA)}
-  else{df_unique_Tree2 <- data.frame(Node = n_NA + length(tree2_pruned$tip.label),
-                                     Support = n_NA_support_values)}
+  if (composition==T && !is.null(tree2_pruned$node.label)){
+    df_unique_Tree2 <- data.frame(Node = n_NA + length(tree2_pruned$tip.label),
+                                  Support = n_NA_support_values,
+                                  Descendants = c2_NA)}
+  else if (composition==F && !is.null(tree2_pruned$node.label)){
+    df_unique_Tree2 <- data.frame(Node = n_NA + length(tree2_pruned$tip.label),
+                                  Support = n_NA_support_values)}
+  else if (composition==F && is.null(tree2_pruned$node.label)){
+    df_unique_Tree2 <- data.frame(Node = n_NA + length(tree2_pruned$tip.label))
+  }
+
   if (dataframe){write.table(df_unique_Tree2, "Tree2_unique.clades.tsv", sep = "\t", row.names = FALSE)}
 
   return(list(df_unique_Tree1, df_unique_Tree2))

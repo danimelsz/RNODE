@@ -4,32 +4,19 @@
 \alias{summaryTopologicalDist}
 \title{summaryTopologicalDist}
 \usage{
-summaryTopologicalDist(
-  tree1,
-  tree2,
-  shared = T,
-  unique = T,
-  RF = T,
-  CID,
-  outgroup = NULL,
-  root = NULL
-)
+summaryTopologicalDist(tree1, tree2, outgroup = NULL, root = NULL)
 }
 \arguments{
 \item{tree1}{A .phylo tree that can be loaded using ape::read.tree for NEWICK files or TreeTools::ReadTntTree for TNT files}
 
 \item{tree2}{Another .phylo tree}
 
-\item{shared}{Optional. Number of shared clades between trees (default: T)}
+\item{outgroup}{Optional. Specify outgroup taxa to remove (by default, the function assumes that the user does not want to remove outgroup taxa)}
 
-\item{unique}{Optional. Number of unique clades in tree 1 and 2 (default: T)}
-
-\item{RF}{Optional. Calculates the RF distance between unrooted trees based on Penny and Hendy (1985) (default: T)}
-
-\item{CID}{Optional. Calculates the CID between trees based on Smith (2020) (default: T)}
+\item{root}{Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, the function assumes that trees share the same root)}
 }
 \description{
-suummaryTopDistances() summarizes metrics of topological distances.
+summaryTopologicalDist() summarizes metrics of topological distances (number of shared and unique clades, normalized Robinson-Foulds, normalized CID, and mean SPR moves).
 }
 \examples{
 # Example 1 (Calculates all metrics)

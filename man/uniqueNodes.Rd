@@ -10,7 +10,7 @@ uniqueNodes(
   composition = T,
   outgroup = NULL,
   root = NULL,
-  dataframe = T
+  dataframe = F
 )
 }
 \arguments{
@@ -35,7 +35,7 @@ tree1 = read.tree (text="(t1,(t2,(t3,(t4,t5)75)32)45);")
 tree2 = read.tree (text="(t1,(t6,(t3,(t4,t5)47)53)94);")
 uniqueNodes (tree1, tree2)
 
-#' # Example 2 (count unique nodes)
+# Example 2 (count unique nodes)
 tree1 = read.tree (text="(t1,(t2,(t3,(t4,t5)75)32)45);")
 tree2 = read.tree (text="(t1,(t6,(t3,(t4,t5)47)53)94);")
 nrow (uniqueNodes (tree1, tree2, composition = F))

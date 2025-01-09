@@ -1,9 +1,9 @@
 #' @title sharedNodes
 #' @name sharedNodes
-#' @description Compare shared clades between two trees. The outputs are (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.
+#' @description Compare support values of shared clades between two trees. The outputs are (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.
 #' @author Daniel YM Nakamura, Taran Grant
 #'
-#' @param tree1 A .phylo tree that can be loaded using ape::read.tree for NEWICK files or TreeTools::ReadTntTree for TNT files
+#' @param tree1 A .phylo tree that can be loaded using ape::read.tree for NEWICK files or TreeTools::ReadTntTree for TNT files. The .phylo must contain $node.label.
 #' @param tree2 Another .phylo tree
 #' @param composition Optional. Specify if composition of corresponding clades should be present in the dataframe (by default, composition = F)
 #' @param outgroup Optional. Specify outgroup taxa to remove (by default, the function assumes that the user does not want to remove outgroup taxa)
@@ -29,8 +29,8 @@ sharedNodes = function (tree1,tree2,
                         outgroup=NULL,
                         root=NULL,
                         plotTrees=F, width=NULL, height=NULL, fsize=NULL, adj=NULL, cex=NULL,
-                        dataframe=T, messages=T,
-                        spearman=T){
+                        dataframe=F, messages=T,
+                        spearman=F){
   # Initial warnings
   missing_params <- c()
   if (is.null(tree1)) missing_params <- c(missing_params, "tree1")
@@ -40,6 +40,19 @@ sharedNodes = function (tree1,tree2,
   } else {
     message("All required parameters provided.") # Proceed with the main functionality if all parameters are provided
   }
+
+  '
+  # Check if the input trees contains $node.label (support)
+  if (is.null(tree1$node.label) && is.null(tree2$node.label)) {
+    stop("Input trees with no support values stored at node.labels")
+  } else if (is.null(tree1$node.label) && is.null(tree2$node.label)==F){
+    stop("Input tree 1 with no support values stored at node.labels")
+  } else if (is.null(tree1$node.label)==F && is.null(tree2$node.label)){
+    stop("Input tree 2 with no support values stored at node.labels")
+  } else if (is.null(tree1$node.label)==F && is.null(tree2$node.label)==F) {
+    print("Both trees with support values.")
+  }
+  '
 
   #################
   # PREPROCESSING #
@@ -97,19 +110,19 @@ sharedNodes = function (tree1,tree2,
 
   # Create a vector of support in shared clades (values from pruned tree 1)
   s1 = c() # empty vector
-  for (x in m1) {
-    s1.temp = tree1_pruned$node.label[x]
-    s1.temp <- gsub("=", "", s1.temp) # Clean the symbol "=" before support values from TNT output
-    s1 = c(s1, s1.temp)
-  }
+    for (x in m1) {
+      s1.temp = tree1_pruned$node.label[x]
+      s1.temp <- gsub("=", "", s1.temp) # Clean the symbol "=" before support values from TNT output
+      s1 = c(s1, s1.temp)
+    }
 
   # Create a vector of support in shared clades (values from pruned tree 2)
   s2 = c() # empty vector
-  for (y in m2) {
-    s2.temp = tree2_pruned$node.label[y]
-    s2.temp <- gsub("=", "", s2.temp)  # Clean the symbol "=" before support values from TNT output
-    s2 = c(s2, s2.temp)
-  }
+    for (y in m2) {
+      s2.temp = tree2_pruned$node.label[y]
+      s2.temp <- gsub("=", "", s2.temp)  # Clean the symbol "=" before support values from TNT output
+      s2 = c(s2, s2.temp)
+    }
 
   # Create a vector of terminal composition in each shared node (clades from pruned tree 1)
   c1 = c() # empty vector
@@ -134,26 +147,29 @@ sharedNodes = function (tree1,tree2,
   }
 
   # Create dataframe
-  if (composition) {
+  if (composition==TRUE && !is.null(tree1_pruned$node.label)) { # if composition should be given and support values are present in the tree 1
     df <- data.frame(Node_Tree_1 = m_noNA[,1],
                    Node_Tree_2 = m_noNA[,2],
                    Support_Tree_1 = s1,
                    Support_Tree_2 = s2,
                    Composition_Tree_1 = c1,
                    Composition_Tree_2 = c2)
-  } else {
+  } else if (composition==F && !is.null(tree1_pruned$node.label)) { # if composition should be ignored and support values are present in the tree 1
     df <- data.frame(Node_Tree_1 = m_noNA[,1],
                      Node_Tree_2 = m_noNA[,2],
                      Support_Tree_1 = s1,
                      Support_Tree_2 = s2)
+  } else if (composition==F && is.null(tree1_pruned$node.label)) { # if composition should be ignored and support values are present in the tree 1
+    df <- data.frame(Node_Tree_1 = m_noNA[,1],
+                     Node_Tree_2 = m_noNA[,2])
   }
 
   # Basic statistics
   nClades1 = tree1_pruned$Nnode
   nClades2 = tree2_pruned$Nnode
   meanSupport1 = mean(na.omit(as.numeric(tree1_pruned$node.label)))
-  meanSupport2 = mean(na.omit(as.numeric(tree2_pruned$node.label)))
   sup1 = as.numeric(df$Support_Tree_1[df$Support_Tree_1 != ""]) # delete empty value of the root
+  meanSupport2 = mean(na.omit(as.numeric(tree2_pruned$node.label)))
   sup2 = as.numeric(df$Support_Tree_2[df$Support_Tree_2 != ""]) # delete empty value of the root
   if (spearman) {spearman = cor.test (sup1, sup2, method="spearman")}
 
@@ -161,10 +177,10 @@ sharedNodes = function (tree1,tree2,
   if (messages) {
   print ("")
   print ("Tree comparisons done!")
-  print (paste("Tree 1: Number of clades =", nClades1, "; Mean support =", meanSupport1))
-  print (paste("Tree 2: Number of clades =", nClades2, "; Mean support =", meanSupport2))
   print (paste("Number of shared clades: ", nrow(df)))
+  print (paste("Tree 1: Total number of clades =", nClades1, "; Mean support =", meanSupport1))
   print (paste("Support of shared clades in tree 1: ", min(sup1), "–", max(sup1), " (", round(mean(sup1),2), ")", sep=""))
+  print (paste("Tree 2: Total number of clades =", nClades2, "; Mean support =", meanSupport2))
   print (paste("Support of shared clades in tree 2: ", min(sup2), "–", max(sup2), " (", round(mean(sup2),2), ")", sep=""))
   if (spearman) {print (paste("Spearman's test: RHO = ", spearman$estimate, "; P-value = ", spearman$p.value))}
   }

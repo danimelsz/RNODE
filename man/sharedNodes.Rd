@@ -16,13 +16,13 @@ sharedNodes(
   fsize = NULL,
   adj = NULL,
   cex = NULL,
-  dataframe = T,
+  dataframe = F,
   messages = T,
-  spearman = T
+  spearman = F
 )
 }
 \arguments{
-\item{tree1}{A .phylo tree that can be loaded using ape::read.tree for NEWICK files or TreeTools::ReadTntTree for TNT files}
+\item{tree1}{A .phylo tree that can be loaded using ape::read.tree for NEWICK files or TreeTools::ReadTntTree for TNT files. The .phylo must contain $node.label.}
 
 \item{tree2}{Another .phylo tree}
 
@@ -39,7 +39,7 @@ sharedNodes(
 \item{spearman}{Optional. Test the correlation between support values using a Spearman test (by default, spearman = T.}
 }
 \description{
-Compare shared clades between two trees. The outputs are (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.
+Compare support values of shared clades between two trees. The outputs are (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.
 }
 \examples{
 # Example 1 (simplest case)
