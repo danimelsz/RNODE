@@ -81,8 +81,8 @@ summaryTopologicalDist = function(tree1, tree2,
   print(paste("No. shared clades =", nSharedClades))
   print(paste("No. unique clades in tree 1 =", nUniqueClades1))
   print(paste("No. unique clades in tree 2 =", nUniqueClades2))
-  print(paste("Noo. polytomies in tree 1 =", nPolytomies1))
-  print(paste("Noo. polytomies in tree 2 =", nPolytomies2))
+  print(paste("No. polytomies in tree 1 =", nPolytomies1))
+  print(paste("No. polytomies in tree 2 =", nPolytomies2))
   print(paste("Normalized Robinson-Foulds =", RFdist))
   print(paste("Normalized Clustering Information Distance =", CID))
 

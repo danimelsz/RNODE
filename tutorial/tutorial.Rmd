@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # 1. Preamble
 
-Tutorial to demonstrate the main functions available in the R package RNODE. This tutorial is organized in two sections related to preprocessing and post-processing of phylogenetic trees.
+Tutorial to demonstrate the main functions available in the R package \code{RNODE}. This tutorial is organized in two sections related to preprocessing and post-processing of phylogenetic trees.
 
 ```{r warning=F, message=F}
 # Load the package
@@ -21,18 +21,16 @@ library(RNODE)
 
 # 2. Preprocessing analyses
 
-## 2.1 prepUnaligned: Unaligned sequence preprocessing
-
 ## 2.2 splitOrdFromUnord: Split a Nexus morphological matrix into partitions of ordered and unordered characters
 
 ```{r}
 # Data input of list of ordered characters
-pwd("../../../Other/OLD/035/")
+setwd("../../../Other/OLD/055/")
 
-tnt=c(11, 13, 15, 17, 18, 19, 20, 22, 23, 24, 28, 31, 44, 58, 88, 89, 93)
+tnt=c(4, 7, 8, 10, 13, 16, 18, 21, 27, 29, 30, 34)
 list_ordered = tnt+1
 
-RNODE::splitOrdFromUnord(input="../../../Other/OLD/035/iqtree/035_MORPH_data.nexus", output_index = "teste", list_ordered, invariant = F)
+RNODE::splitOrdFromUnord(input="iqtree/055_MORPH_data.nexus", output_index = "iqtree/055_MORPH_", list_ordered, invariant = F)
 ```
 
 # 3. Post-processing analyses
@@ -66,7 +64,7 @@ nodelabels(b$node.label,
            frame="none")
 
 # Run compareNodes
-compareNodes(tree1=a, tree2=b, composition=T)
+sharedNodes(tree1=a, tree2=b, composition=T)
 ```
 
 Second, we can use **compareNodes** to compare two empirical trees in .nwk format estimated in TNT (datasets from Ruane et al. 2015). One tree was estimated with Sanger-based data, whereas the other one was estimated with AHE data. Polytomous nodes and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees.
@@ -148,17 +146,8 @@ nodelabels(b$node.label,
 s = RNODE::sharedNodes(a, b, spearman=F)
 u = RNODE::uniqueNodes(a, b, composition = F)
 
-# Create vector with MOL support
-s1 = as.numeric(s$Support_Tree_1) # shared clades
-u1 = as.numeric(u[[1]]$Support) # unique clades
-# Create vector with TE occurrence
-s2 <- rep(1, length(s1))  # Create s2 with the same length as s1, filled with 1
-u2 <- rep(0, length(u1))  # Create u2 with the same length as u1, filled with 0
-# Combine the vectors into a data frame
-df <- data.frame(
-  support_tree1 = c(s1, u1),        # Append u1 below s1
-  occurrence_tree2 = c(s2, u2)     # Append u2 below s2
-)
+setwd("./../../../B3_RNODE/")
+RNODE::sharedNodes(a,b,tanglegram=T)
 ```
 
 ## 3.3 pairwiseTopologies: Creates a pairwise matrix of topological distances; plot using heat map

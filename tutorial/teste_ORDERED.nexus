@@ -1,0 +1,78 @@
+#NEXUS
+[Data written by write.nexus.data.R, Mon Jan 20 17:51:03 2025]
+BEGIN DATA;
+  DIMENSIONS NTAX=69 NCHAR=30;
+  FORMAT DATATYPE=STANDARD MISSING=? GAP=-  symbols="0123456789";
+  MATRIX
+    Dactylonax_palpator                  221222011010120-2-002040-0??1-
+    Dactylopsila_trivirgata              2(012)12(23)2011010120-2-002040-0??1-
+    Petaurus_breviceps                   001232011110120221---040-1??(01)1
+    Gymnobelideus_leadbeateri            -01?22??1110120-21---040-1??01
+    Hemibelideus_lemuroides              0012320?1110220-?-0?104000??1-
+    Petauroides_volans                   001232011110220-?-0?10(234)000??00
+    Pseudochirops_cupreus                -(01)(01)2(23)2011110220-2-0?104000(23)?(01)0
+    Pseudocheirus_peregrinus             -01232011110220-?-0?104000??00
+    Pseudochirops_archeri                (01)012(23)20??110220-?-??10(234)000(23)?0(01)
+    Petropseudes_dahli                   -00?32??1110220-?-0?104000(123)?00
+    Acrobates_pygmaeus                   -01?321221100200?1---140-0(123)000
+    Distoechurus_pennatus                001?321221?0(01)20021---1(012)0-1(123)000
+    Tarsipes_rostratus                   -0?(01)2211211-02???----??0--3?--
+    Burramys_parvus                      101122011111120-?-021040-1??00
+    Ailurops_ursinus                     -(01)12(23)202?11022--0-11(01)030-1(123)?(01)1
+    Spilocuscus_maculatus                -(01)123202111022--0-011030-1(123)?01
+    Strigocuscus_celebensis              111232?2111022?-?-0100(234)0-1(123)?1-
+    Trichosurus_vulpecula                -(01)123202?11022--0-010020-1(123)?01
+    Wyulda_squamicaudata                 -11?32?2?1?012--0-0100(012)0-1??01
+    Dorcopsulus_vanheurni                101231001101222-0-121000-23-01
+    Lagorchestes_conspicillatus          1112310?1111222-0-121020-23-01
+    Lagostrophus_fasciatus               -11?310??111222-0-111020-23-01
+    Osphranter_robustus                  -(01)12310?1111222-0-101031-23-01
+    Setonix_brachyurus                   1(01)1231001101222-0-111000-23-01
+    Wallabia_bicolor                     1(01)1?310(01)?1(01)1222-0-1(01)10(23)0-23-01
+    Aepyprymnus_rufescens                1012310?1111222-0-(01)21030-13-01
+    Caloprymnus_campestris               1011310??111(12)22-0-1010?0-13-01
+    Potorous_tridactylus                 1(01)113100?111(12)22-0-0110(01)0-13-01
+    Hypsiprymnodon_moschatus             101?31011111121-0-0200?001(23)202
+    Vombatus_ursinus                     10121101011223--2----040-13-01
+    Phascolarctos_cinereus               1(012)11110?011122--2-101040003-01
+    Thylacinus_cynocephalus              1200100?011-210221---04010122-
+    Myrmecobius_fasciatus                10102000(01)11-1100(12)2---040?0110-
+    Antechinomys_laniger                 1000200(01)211-110211---000101101
+    Dasycercus_cristicauda               1(012)002000211-110-?----000101-01
+    Dasykaluta_rosamondae                1000200?211-110-?----0-0101-01
+    Dasyuroides_byrnei                   -(01)00200(01)211-110-2----010101-01
+    Murexechinus_melanurus               10002000211-110(12)11---000101001
+    Murexia_longicaudata                 1(01)00200?211-110211---0?0101101
+    Neophascogale_lorentzii              1(01)002000211-110021---020101001
+    Paramurexia_rothschildi              -000200?211-(12)102?1---000101101
+    Parantechinus_apicalis               10?0(123)???211-?10-?----0?0101001
+    Phascogale_tapoatafa                 10002000211-110(012)11---0(01)0101001
+    Phascolosorex_dorsalis               10002000211-110021---000101001
+    Phascomurexia_naso                   1000200(01)211-110121---000101(01)01
+    Pseudantechinus_macdonnellensis      -0002000211-1101?1---0?01010(01)1
+    Sarcophilus_harrisii                 12002000211-(12)10-?----0-0101-1-
+    Sminthopsis_crassicaudata            -(01)002000211-110211---000101(01)01
+    Chaeropus_ecaudatus                  1010200(01)011-100211---0?0001000
+    Isoodon_macrourus                    11101000011-(12)00221---020101101
+    Macrotis_lagotis                     1(012)101001011-200111---020101101
+    Perameles_gunnii                     1010100?011-100221---0(012)0101101
+    Peroryctes_raffrayana                101(01)1001010-100(12)21---000101(12)01
+    Rhynchomeles_prattorum               101?100?010-110221---000101101
+    Notoryctes_typhlops                  -0??(23)(12)2122?-020-?1---0?020(12)?0-
+    Dromiciops_gliroides                 -0002201210-000201---0(012)0000201
+    Lestoros_inca                        -00(01)100?(01)10-1102?1---0?0-0(01)201
+    Rhyncholestes_raphanurus             -001100(01)010-1102?1---0(234)0-0(01)201
+    Caluromysiops_irrupta                1210100?111-100000---00010000?
+    Chacodelphys_formosa                 10?0(123)???010-1001?1---000100001
+    Chironectes_minimus                  12?01001010-200201---020100001
+    Cryptonanus_unduaviensis             1000100?010-100201---000100001
+    Glironia_venusta                     0000100?010-1001?0---000100001
+    Hyladelphys_kalinowskii              -000100?110-100020---000100001
+    Lestodelphys_halli                   1000100?110-100201---000100201
+    Lutreolina_crassicaudata             12011001010-200201---0(012)0100001
+    Marmosa_murina                       1000100?010-100101---000100001
+    Metachirus_nudicaudatus              10001001010-200101---010200001
+    Tlacuatzin_canescens                 10001001010-100101---000100001
+  ;
+END;
+

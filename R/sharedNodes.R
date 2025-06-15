@@ -3,14 +3,16 @@
 #' @description Compare support values of shared clades between two trees. The outputs are (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.
 #' @author Daniel YM Nakamura, Taran Grant
 #'
-#' @param tree1 A .phylo tree that can be loaded using ape::read.tree for NEWICK files or TreeTools::ReadTntTree for TNT files. The .phylo must contain $node.label.
-#' @param tree2 Another .phylo tree
-#' @param composition Optional. Specify if composition of corresponding clades should be present in the dataframe (by default, composition = F)
-#' @param outgroup Optional. Specify outgroup taxa to remove (by default, the function assumes that the user does not want to remove outgroup taxa)
-#' @param root Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, the function assumes that trees share the same root)
-#' @param plotTrees Optional. Plot the two trees after taxa pruning in PDF format. If plot=T, the user should also adjust PDF dimensions (e.g. width = 8, height = 8), label size (e.g. fsize = 4), and position and size of support values (e.g. adj = c(-1.5,0.5), cex = 0.6).
-#' @param dataframe Optional. Write a TSV file in current directory containing the output dataframe (by default, no .TSV is written).
-#' @param spearman Optional. Test the correlation between support values using a Spearman test (by default, spearman = T.
+#' @param tree1 A \code{phylo} tree that can be loaded using \code{ape::read.tree} for \code{NEWICK} files or \code{TreeTools::ReadTntTree} for \code{TNT} files. The \code{phylo} must contain the element \code{$node.label}.
+#' @param tree2 Another \code{phylo} tree
+#' @param composition Optional. Specify if composition of corresponding clades should be present in the dataframe (by default, \code{composition = F})
+#' @param outgroup Optional. Specify outgroup taxa to remove (by default, the function assumes that the user does not want to remove outgroup taxa; i.e. \code{outgroup = NULL})
+#' @param root Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, the function assumes that trees share the same root; i.e. \code{root = NULL})
+#' @param plotTrees Optional. Plot the two trees after taxa pruning in \code{PDF} format. If \code{plot = T}, the user should also adjust \code{PDF} dimensions (e.g. \code{width = 8}, \code{height = 8}), label size (e.g. \code{fsize = 4}), and position and size of support values (e.g. \code{adj = c(-1.5,0.5)}, \code{cex = 0.6}).
+#' @param tanglegram Optional. Plot a tanglegram minimizing the number of crosses of lines linking two trees in \code{PDF} format.
+#' @param dataframe Optional. Write a \code{TSV} file in current directory containing the output dataframe (by default, no \code{TSV} is written).
+#' @param spearman Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = T}).
+#'
 #' @examples
 #' # Example 1 (simplest case)
 #' tree1 = read.tree (text="(t1,(t2,(t3,(t4,t5)75)32)45);")
@@ -29,6 +31,7 @@ sharedNodes = function (tree1,tree2,
                         outgroup=NULL,
                         root=NULL,
                         plotTrees=F, width=NULL, height=NULL, fsize=NULL, adj=NULL, cex=NULL,
+                        tanglegram=F,
                         dataframe=F, messages=T,
                         spearman=F){
   # Initial warnings
@@ -190,4 +193,41 @@ sharedNodes = function (tree1,tree2,
     write.table(df, "shared.clades.tsv", sep = "\t", row.names = FALSE)
   }
   return (df)
+
+  ############################
+  # TANGLEGRAM VISUALIZATION #
+  ############################
+
+  if (tanglegram==T) {
+
+  # Force the trees to be ultrametric
+  tree1_ultrametric <- force.ultrametric(tree1_pruned, method = "extend")
+  tree2_ultrametric <- force.ultrametric(tree2_pruned, method = "extend")
+
+  # Resolve polytomies in the trees; multi2di() resolves polytomies by adding zero-length branches
+  tree1_binary <- multi2di(tree1_ultrametric)
+  tree2_binary <- multi2di(tree2_ultrametric)
+
+  # Convert binary ultrametric trees to hclust objects
+  hclust1 <- ape::as.hclust.phylo(tree1_binary)
+  hclust2 <- ape::as.hclust.phylo(tree2_binary)
+
+  # Convert hclust objects to dendrograms
+  dend1 <- as.dendrogram(hclust1)
+  dend2 <- as.dendrogram(hclust2)
+
+  # Save tanglegram as a PDF
+  pdf("tanglegram_comparison.pdf", width = 5, height = 5) # Specify dimensions if needed
+  tanglegram(a, b,
+             highlight_distinct_edges = TRUE,   # Highlights differences
+             common_subtrees_color_lines = TRUE, # Colors common subtrees
+             edge.lwd = c(1, 1),  # Adjust edge thickness (left, right)
+             lab.cex = 0.5,  # Adjust font size of terminal names
+             main_left = "Tree 1", # Title Tree 1
+             main_right = "Tree 2", # Title Tree 2
+             margin_inner = 1) # Distance between trees
+
+  dev.off()  # Close the PDF device
+  }
+
 }

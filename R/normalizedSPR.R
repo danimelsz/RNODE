@@ -61,7 +61,7 @@ normalizedSPR = function(tree1, tree2,
   ###########################
 
   # 1. If both input files are phylo
-  if (class(trees1)=="phylo" && class(trees2)=="phylo"){
+  if (class(tree1)=="phylo" && class(tree2)=="phylo"){
   # No. leaves
   n = length(tree1$tip.label)
   # No. SPR moves
@@ -85,7 +85,7 @@ normalizedSPR = function(tree1, tree2,
   }
 
   # 2. If tree1 is multiPhylo
-  else if (class(trees1)=="multiPhylo"){
+  else if (class(tree1)=="multiPhylo"){
     # No. leaves
     n = length(tree2$tip.label)
     # No. SPR moves
@@ -109,7 +109,7 @@ normalizedSPR = function(tree1, tree2,
   }
 
   # 3. If tree2 is multiPhylo
-  else if (class(trees2)=="multiPhylo"){
+  else if (class(tree2)=="multiPhylo"){
     # No. leaves
     n = length(tree1$tip.label)
     # No. SPR moves

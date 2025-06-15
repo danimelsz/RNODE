@@ -16,27 +16,30 @@ sharedNodes(
   fsize = NULL,
   adj = NULL,
   cex = NULL,
+  tanglegram = F,
   dataframe = F,
   messages = T,
   spearman = F
 )
 }
 \arguments{
-\item{tree1}{A .phylo tree that can be loaded using ape::read.tree for NEWICK files or TreeTools::ReadTntTree for TNT files. The .phylo must contain $node.label.}
+\item{tree1}{A \code{phylo} tree that can be loaded using \code{ape::read.tree} for \code{NEWICK} files or \code{TreeTools::ReadTntTree} for \code{TNT} files. The \code{phylo} must contain the element \code{$node.label}.}
 
-\item{tree2}{Another .phylo tree}
+\item{tree2}{Another \code{phylo} tree}
 
-\item{composition}{Optional. Specify if composition of corresponding clades should be present in the dataframe (by default, composition = F)}
+\item{composition}{Optional. Specify if composition of corresponding clades should be present in the dataframe (by default, \code{composition = F})}
 
-\item{outgroup}{Optional. Specify outgroup taxa to remove (by default, the function assumes that the user does not want to remove outgroup taxa)}
+\item{outgroup}{Optional. Specify outgroup taxa to remove (by default, the function assumes that the user does not want to remove outgroup taxa; i.e. \code{outgroup = NULL})}
 
-\item{root}{Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, the function assumes that trees share the same root)}
+\item{root}{Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, the function assumes that trees share the same root; i.e. \code{root = NULL})}
 
-\item{plotTrees}{Optional. Plot the two trees after taxa pruning in PDF format. If plot=T, the user should also adjust PDF dimensions (e.g. width = 8, height = 8), label size (e.g. fsize = 4), and position and size of support values (e.g. adj = c(-1.5,0.5), cex = 0.6).}
+\item{plotTrees}{Optional. Plot the two trees after taxa pruning in \code{PDF} format. If \code{plot = T}, the user should also adjust \code{PDF} dimensions (e.g. \code{width = 8}, \code{height = 8}), label size (e.g. \code{fsize = 4}), and position and size of support values (e.g. \code{adj = c(-1.5,0.5)}, \code{cex = 0.6}).}
 
-\item{dataframe}{Optional. Write a TSV file in current directory containing the output dataframe (by default, no .TSV is written).}
+\item{tanglegram}{Optional. Plot a tanglegram minimizing the number of crosses of lines linking two trees in \code{PDF} format.}
 
-\item{spearman}{Optional. Test the correlation between support values using a Spearman test (by default, spearman = T.}
+\item{dataframe}{Optional. Write a \code{TSV} file in current directory containing the output dataframe (by default, no \code{TSV} is written).}
+
+\item{spearman}{Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = T}).}
 }
 \description{
 Compare support values of shared clades between two trees. The outputs are (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.
