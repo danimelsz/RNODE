@@ -1,0 +1,8 @@
+# Ignore
+LICENSE linguist-documentation=true
+DESCRIPTION linguist-documentation=true
+README.md linguist-documentation=true
+NAMESPACE linguist-documentation=true 
+man/* linguist-documentation=true
+testdata/* linguist-documentation=true
+tutorial/* linguist-documentation=true
