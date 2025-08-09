@@ -11,7 +11,7 @@ multiSPR(trees1, trees2, method = "random", normalization = FALSE)
 
 \item{trees2}{Another \code{phylo} or \code{multiPhylo} object.}
 
-\item{method}{Optional. Specify if SPR distances will be calculated by (1) \code{random} (default: selects one binary tree randomly from the multiPhylo object) or (2) \code{meanSPR} (calculates mean of all pairwise SPR distances between two \code{multiPhylo} objects) or (3) \code{minSPR} (calculates the minimum values of all pairwise SPR distances between two \code{multiPhylo} objects. The option \code{meanSPR} can be slow if the number of MPTs is high.}
+\item{method}{Optional. Specify if SPR distances will be calculated by (1) \code{random} (default: selects one binary tree randomly from the multiPhylo object), (2) \code{meanSPR} (calculates mean of all pairwise SPR distances between two \code{multiPhylo} objects) or (3) \code{minSPR} (calculates the minimum values of all pairwise SPR distances between two \code{multiPhylo} objects. The option \code{meanSPR} can be slow if the number of MPTs is high.}
 
 \item{normalization}{Optional. Specify if SPR distances should be normalized using upper bound values (Ding et al. 2011). See details in \link{normalizedSPR}. By default, SPR distances are not normalized.}
 }

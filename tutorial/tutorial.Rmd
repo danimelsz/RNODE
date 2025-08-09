@@ -25,12 +25,11 @@ library(RNODE)
 
 ```{r}
 # Data input of list of ordered characters
-setwd("../../../Other/OLD/055/")
+setwd("../../../B2_TEvsMOL/Other/OLD/048_Fossils/iqtree/")
 
-tnt=c(4, 7, 8, 10, 13, 16, 18, 21, 27, 29, 30, 34)
-list_ordered = tnt+1
+list_ordered=c(1, 6, 7, 8, 10, 12, 13, 14, 17, 19, 23, 26, 31, 35, 41, 44, 45, 48, 51, 54, 55, 68, 71, 72, 92, 94, 96, 102, 105, 108, 109, 128, 129, 130, 131, 132, 135, 142, 144, 152, 153, 193)
 
-RNODE::splitOrdFromUnord(input="iqtree/055_MORPH_data.nexus", output_index = "iqtree/055_MORPH_", list_ordered, invariant = F)
+RNODE::splitOrdFromUnord(input="048_MORPH_data.nex", output_index = "048_MORPH", list_ordered, invariant = F)
 ```
 
 # 3. Post-processing analyses

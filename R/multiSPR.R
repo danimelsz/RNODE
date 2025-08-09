@@ -5,7 +5,7 @@
 #'
 #' @param trees1 A \code{phylo} or \code{multiPhylo} object with multiple trees that can be loaded using \code{ape::read.tree} for NEWICK files or \code{TreeTools::ReadTntTree} for TNT files. If the pool of MPTs presents binary and non-binary trees, only binary trees are processed.
 #' @param trees2 Another \code{phylo} or \code{multiPhylo} object.
-#' @param method Optional. Specify if SPR distances will be calculated by (1) \code{random} (default: selects one binary tree randomly from the multiPhylo object) or (2) \code{meanSPR} (calculates mean of all pairwise SPR distances between two \code{multiPhylo} objects) or (3) \code{minSPR} (calculates the minimum values of all pairwise SPR distances between two \code{multiPhylo} objects. The option \code{meanSPR} can be slow if the number of MPTs is high.
+#' @param method Optional. Specify if SPR distances will be calculated by (1) \code{random} (default: selects one binary tree randomly from the multiPhylo object), (2) \code{meanSPR} (calculates mean of all pairwise SPR distances between two \code{multiPhylo} objects) or (3) \code{minSPR} (calculates the minimum values of all pairwise SPR distances between two \code{multiPhylo} objects. The option \code{meanSPR} can be slow if the number of MPTs is high.
 #' @param normalization Optional. Specify if SPR distances should be normalized using upper bound values (Ding et al. 2011). See details in \link{normalizedSPR}. By default, SPR distances are not normalized.
 #'
 #' @references Ding, Y., Grünewald, S., Humphries, P.J., 2011. On agreement forests. J. Comb. Theory Ser. 118(7), 2059–2065.
@@ -192,8 +192,8 @@ multiSPR = function(trees1, trees2,
 
 
 #TESTE
-trees1 = mp_mol_mpts[[3]]$mp_mol_mpts
-trees2 = mp_te_mpts[[3]]$mp_te_mpts
+trees1 = mp_mol_mpts[[2]]$mp_mol_mpts
+trees2 = mp_te_mpts[[2]]$mp_te_mpts
 trees1
 trees2
 
@@ -205,13 +205,13 @@ trees2 <- drop.tip(trees2, trees2$tip.label[!(trees2$tip.label %in% shared_termi
 
 SPR.dist(trees1, trees2)
 normalizedSPR(trees1, trees2)
-multiSPR(mp_mol_mpts[[3]]$mp_mol_mpts, mp_te_mpts[[3]]$mp_te_mpts, method="minSPR", normalization=T)
+multiSPR(mp_mol_mpts[[24]]$mp_mol_mpts, mp_te_mpts[[24]]$mp_te_mpts, method="minSPR", normalization=T)
 
 a = vector("list", 1) # empty list
-for (i in 24) {a[[i]] = multiSPR(mp_mol_mpts[[i]]$mp_mol_mpts,
-                       mp_te_mpts[[i]]$mp_te_mpts,
+for (i in 7) {a[[i]] = multiSPR(ml_mol_best[[i]],
+                       ml_te_noasc_best[[i]],
                        method="meanSPR",
                        normalization=T)}
 a
-'
 
+'
