@@ -9,6 +9,7 @@
 #' @param outgroup Optional. Specify outgroup taxa to remove (by default, the function assumes that the user does not want to remove outgroup taxa; i.e. \code{outgroup = NULL})
 #' @param root Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, the function assumes that trees share the same root; i.e. \code{root = NULL})
 #' @param plotTrees Optional. Plot the two trees after taxa pruning in \code{PDF} format. If \code{plot = T}, the user should also adjust \code{PDF} dimensions (e.g. \code{width = 8}, \code{height = 8}), label size (e.g. \code{fsize = 4}), and position and size of support values (e.g. \code{adj = c(-1.5,0.5)}, \code{cex = 0.6}).
+#' @param node.numbers Optional. If plotTrees = T, show node index (do not confuse with support values'by default, True).
 #' @param tanglegram Optional. Plot a tanglegram minimizing the number of crosses of lines linking two trees in \code{PDF} format.
 #' @param dataframe Optional. Write a \code{TSV} file in current directory containing the output dataframe (by default, no \code{TSV} is written).
 #' @param spearman Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = T}).
@@ -30,7 +31,7 @@ sharedNodes = function (tree1,tree2,
                         composition=F,
                         outgroup=NULL,
                         root=NULL,
-                        plotTrees=F, width=NULL, height=NULL, fsize=NULL, adj=NULL, cex=NULL,
+                        plotTrees=F, node.numbers=T, width=NULL, height=NULL, fsize=NULL, adj=NULL, cex=NULL,
                         tanglegram=F,
                         dataframe=F, messages=T,
                         spearman=F){
@@ -77,14 +78,14 @@ sharedNodes = function (tree1,tree2,
   tree2_pruned = ladderize(tree2_pruned, right = TRUE) # Sort nodes in the tree according to clade size
   if (plotTrees) {
     pdf("tree1_pruned.pdf", width = width, height = height)  # Save plotted tree to PDF, adjust width and height as needed
-    plotTree(tree1_pruned, fsize = fsize, ftype="i", node.numbers=T, color="blue") # Adjust font size as needed
+    plotTree(tree1_pruned, fsize = fsize, ftype="i", node.numbers=node.numbers, color="blue") # Adjust font size as needed
     nodelabels(tree1_pruned$node.label,
                adj=adj, # Adjust horizontal and vertical position
                frame="none", # Specify the borders of support values
                cex=cex) # Adjust the size of support values
     dev.off()
     pdf("tree2_pruned.pdf", width = width, height = height)  # Save plotted tree to PDF, adjust width and height as needed
-    plotTree(tree2_pruned, fsize = fsize, ftype="i", node.numbers=T, color="red") # Adjust font size as needed
+    plotTree(tree2_pruned, fsize = fsize, ftype="i", node.numbers=node.numbers, color="red") # Adjust font size as needed
     nodelabels(tree2_pruned$node.label,
                adj=adj, # Adjust horizontal and vertical position
                frame="none", # Specify borders of support values

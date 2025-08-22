@@ -11,6 +11,7 @@ sharedNodes(
   outgroup = NULL,
   root = NULL,
   plotTrees = F,
+  node.numbers = T,
   width = NULL,
   height = NULL,
   fsize = NULL,
@@ -34,6 +35,8 @@ sharedNodes(
 \item{root}{Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, the function assumes that trees share the same root; i.e. \code{root = NULL})}
 
 \item{plotTrees}{Optional. Plot the two trees after taxa pruning in \code{PDF} format. If \code{plot = T}, the user should also adjust \code{PDF} dimensions (e.g. \code{width = 8}, \code{height = 8}), label size (e.g. \code{fsize = 4}), and position and size of support values (e.g. \code{adj = c(-1.5,0.5)}, \code{cex = 0.6}).}
+
+\item{node.numbers}{Optional. If plotTrees = T, show node index (do not confuse with support values'by default, True).}
 
 \item{tanglegram}{Optional. Plot a tanglegram minimizing the number of crosses of lines linking two trees in \code{PDF} format.}
 
