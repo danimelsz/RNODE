@@ -9,10 +9,22 @@
 #' @param outgroup Optional. Specify outgroup taxa to remove (by default, the function assumes that the user does not want to remove outgroup taxa; i.e. \code{outgroup = NULL})
 #' @param root Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, the function assumes that trees share the same root; i.e. \code{root = NULL})
 #' @param plotTrees Optional. Plot the two trees after taxa pruning in \code{PDF} format. If \code{plot = T}, the user should also adjust \code{PDF} dimensions (e.g. \code{width = 8}, \code{height = 8}), label size (e.g. \code{fsize = 4}), and position and size of support values (e.g. \code{adj = c(-1.5,0.5)}, \code{cex = 0.6}).
+#' @param output.tree1 Optional. The output file name of tree 1 if plotTrees = T.
+#' @param output.tree2 Optional. The output file name of tree 2 if plotTrees = T.
 #' @param node.numbers Optional. If plotTrees = T, show node index (do not confuse with support values'by default, True).
 #' @param tanglegram Optional. Plot a tanglegram minimizing the number of crosses of lines linking two trees in \code{PDF} format. If the input tree has no branch length, uniform lengths are simulated to enable visualization.
+#' @param tanglegram.axes Optional. Show scale in tangle trees (default = F)
+#' @param tanglegram.width Optional. Width of tangle trees in PDF (default = 5).
+#' @param tanglegram.height Optional. Height of tangle trees in PDF (default = 5).
+#' @param tanglegram.colors Optional. Show color in edges connecting both tangle trees (default = T).
+#' @param tanglegram.lwd Optional. Thickness of edges connecting both tangle trees (default = 1).
+#' @param tanglegram.edge.lwd Optional. Thickness of edges of tangle trees (default = c(0.1, 0.1)).
+#' @param tanglegram.margin Optional. Distance between tangle trees (default = 7).
+#' @param tanglegram.lab.cex Optional. Size of leaf names (default - 0.5).
+#' @param output.tangletree Optional. The output file name if tanglegram = T.
 #' @param dataframe Optional. Write a \code{TSV} file in current directory containing the output dataframe (by default, no \code{TSV} is written).
 #' @param spearman Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = T}).
+#' @param output.dataframe Optional. The output file name of the dataframe if dataframe = T.
 #'
 #' @examples
 #' # Example 1 (simplest case)
@@ -31,9 +43,9 @@ sharedNodes = function (tree1,tree2,
                         composition=F,
                         outgroup=NULL,
                         root=NULL,
-                        plotTrees=F, node.numbers=T, width=NULL, height=NULL, fsize=NULL, adj=NULL, cex=NULL,
-                        tanglegram=F,
-                        dataframe=F, messages=T,
+                        plotTrees=F, node.numbers=T, width=NULL, height=NULL, fsize=NULL, adj=NULL, cex=NULL, output.tree1="tree1_pruned.pdf", output.tree2="tree2_pruned.pdf",
+                        tanglegram=F, output.tangletree="tanglegram_comparison.pdf", tanglegram.margin=7, tanglegram.lab.cex=0.5, tanglegram.edge.lwd=c(0.1, 0.1), tanglegram.lwd=1, tanglegram.axes=F, tanglegram.width=5, tanglegram.height=5, tanglegram.colors=T,
+                        dataframe=F, output.dataframe="shared.nodes.tsv", messages=T,
                         spearman=F){
   # Initial warnings
   missing_params <- c()
@@ -79,14 +91,14 @@ sharedNodes = function (tree1,tree2,
 
   # If specified, plot trees with node index (inside squares) and support values
   if (plotTrees) {
-    pdf("tree1_pruned.pdf", width = width, height = height)  # Save plotted tree to PDF, adjust width and height as needed
+    pdf(file=output.tree1, width = width, height = height)  # Save plotted tree to PDF, adjust width and height as needed
     plotTree(tree1_pruned, fsize = fsize, ftype="i", node.numbers=node.numbers, color="blue") # Adjust font size as needed
     nodelabels(tree1_pruned$node.label,
                adj=adj, # Adjust horizontal and vertical position
                frame="none", # Specify the borders of support values
                cex=cex) # Adjust the size of support values
     dev.off()
-    pdf("tree2_pruned.pdf", width = width, height = height)  # Save plotted tree to PDF, adjust width and height as needed
+    pdf(file=output.tree2, width = width, height = height)  # Save plotted tree to PDF, adjust width and height as needed
     plotTree(tree2_pruned, fsize = fsize, ftype="i", node.numbers=node.numbers, color="red") # Adjust font size as needed
     nodelabels(tree2_pruned$node.label,
                adj=adj, # Adjust horizontal and vertical position
@@ -193,9 +205,8 @@ sharedNodes = function (tree1,tree2,
 
   # Output
   if (dataframe) {
-    write.table(df, "shared.clades.tsv", sep = "\t", row.names = FALSE)
+    write.table(df, file=output.dataframe, sep = "\t", row.names = FALSE)
   }
-  return (df)
 
   ############################
   # TANGLEGRAM VISUALIZATION #
@@ -204,16 +215,16 @@ sharedNodes = function (tree1,tree2,
   if (tanglegram==T) {
     # Force the trees to be ultrametric
     if (!is.null(tree1_pruned$edge.length)) {
-      tree1_ultrametric <- force.ultrametric(tree1_pruned, method = "extend")
+      tree1_ultrametric <- force.ultrametric(tree1_pruned, method = "extend", message=F)
     } else {
       tree1_pruned$edge.length <- rep(1, nrow(tree1_pruned$edge))
-      tree1_ultrametric <- force.ultrametric(tree1_pruned, method = "extend")
+      tree1_ultrametric <- force.ultrametric(tree1_pruned, method = "extend", message=F)
       }
     if (!is.null(tree2_pruned$edge.length)) {
-      tree2_ultrametric <- force.ultrametric(tree2_pruned, method = "extend")
+      tree2_ultrametric <- force.ultrametric(tree2_pruned, method = "extend", message=F)
     } else {
       tree2_pruned$edge.length <- rep(1, nrow(tree2_pruned$edge))
-      tree2_ultrametric <- force.ultrametric(tree2_pruned, method = "extend")
+      tree2_ultrametric <- force.ultrametric(tree2_pruned, method = "extend", message=F)
     }
 
     # Resolve polytomies in the trees; multi2di() resolves polytomies by adding zero-length branches
@@ -221,27 +232,28 @@ sharedNodes = function (tree1,tree2,
     tree2_binary <- multi2di(tree2_ultrametric)
 
     # Convert binary ultrametric trees to hclust objects
-    hclust1 <- ape::as.hclust.phylo(tree1_binary)
-    hclust2 <- ape::as.hclust.phylo(tree2_binary)
+    hclust1 <- ape::as.hclust.phylo(ladderize(tree1_binary))
+    hclust2 <- ape::as.hclust.phylo(ladderize(tree2_binary))
 
     # Convert hclust objects to dendrograms
     dend1 <- as.dendrogram(hclust1)
     dend2 <- as.dendrogram(hclust2)
 
     # Save tanglegram as a PDF
-    pdf("tanglegram_comparison.pdf", width = 5, height = 5) # Specify dimensions if needed
+    pdf(file=output.tangletree, width = tanglegram.width, height = tanglegram.height) # Specify dimensions if needed
     tanglegram(dend1, dend2,
-               axes=F,
-               highlight_distinct_edges = TRUE,   # Highlights differences
-               common_subtrees_color_lines = TRUE, # Colors common subtrees
-               lwd= 1, # thickness of edges connecting two trees
-               edge.lwd = c(0.1, 0.1),  # Adjust edge thickness (left, right)
-               lab.cex = 0.5,  # Adjust font size of terminal names
-               main_left = "MP MOL", # Title Tree 1
-               main_right = "MP TE", # Title Tree 2
-               margin_inner = 7) # Distance between trees
-
+               axes=tanglegram.axes,
+               highlight_distinct_edges = T,   # Highlights differences
+               common_subtrees_color_lines = tanglegram.colors, # Colors common subtrees
+               lwd= tanglegram.lwd, # thickness of edges connecting two trees
+               edge.lwd = tanglegram.edge.lwd,  # Adjust edge thickness (left, right)
+               lab.cex = tanglegram.lab.cex,  # Adjust font size of terminal names
+               #main_left = "MP MOL", # Title Tree 1
+               #main_right = "MP TE", # Title Tree 2
+               margin_inner = tanglegram.margin) # Distance between trees
     dev.off()  # Close the PDF device
-    }
+  }
+
+  return (df)
 
 }

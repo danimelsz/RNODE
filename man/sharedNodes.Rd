@@ -17,8 +17,20 @@ sharedNodes(
   fsize = NULL,
   adj = NULL,
   cex = NULL,
+  output.tree1 = "tree1_pruned.pdf",
+  output.tree2 = "tree2_pruned.pdf",
   tanglegram = F,
+  output.tangletree = "tanglegram_comparison.pdf",
+  tanglegram.margin = 7,
+  tanglegram.lab.cex = 0.5,
+  tanglegram.edge.lwd = c(0.1, 0.1),
+  tanglegram.lwd = 1,
+  tanglegram.axes = F,
+  tanglegram.width = 5,
+  tanglegram.height = 5,
+  tanglegram.colors = T,
   dataframe = F,
+  output.dataframe = "shared.nodes.tsv",
   messages = T,
   spearman = F
 )
@@ -38,9 +50,33 @@ sharedNodes(
 
 \item{node.numbers}{Optional. If plotTrees = T, show node index (do not confuse with support values'by default, True).}
 
-\item{tanglegram}{Optional. Plot a tanglegram minimizing the number of crosses of lines linking two trees in \code{PDF} format.}
+\item{output.tree1}{Optional. The output file name of tree 1 if plotTrees = T.}
+
+\item{output.tree2}{Optional. The output file name of tree 2 if plotTrees = T.}
+
+\item{tanglegram}{Optional. Plot a tanglegram minimizing the number of crosses of lines linking two trees in \code{PDF} format. If the input tree has no branch length, uniform lengths are simulated to enable visualization.}
+
+\item{output.tangletree}{Optional. The output file name if tanglegram = T.}
+
+\item{tanglegram.margin}{Optional. Distance between tangle trees (default = 7).}
+
+\item{tanglegram.lab.cex}{Optional. Size of leaf names (default - 0.5).}
+
+\item{tanglegram.edge.lwd}{Optional. Thickness of edges of tangle trees (default = c(0.1, 0.1)).}
+
+\item{tanglegram.lwd}{Optional. Thickness of edges connecting both tangle trees (default = 1).}
+
+\item{tanglegram.axes}{Optional. Show scale in tangle trees (default = F)}
+
+\item{tanglegram.width}{Optional. Width of tangle trees in PDF (default = 5).}
+
+\item{tanglegram.height}{Optional. Height of tangle trees in PDF (default = 5).}
+
+\item{tanglegram.colors}{Optional. Show color in edges connecting both tangle trees (default = T).}
 
 \item{dataframe}{Optional. Write a \code{TSV} file in current directory containing the output dataframe (by default, no \code{TSV} is written).}
+
+\item{output.dataframe}{Optional. The output file name of the dataframe if dataframe = T.}
 
 \item{spearman}{Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = T}).}
 }
