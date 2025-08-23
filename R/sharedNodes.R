@@ -26,7 +26,7 @@
 #' @param tanglegram.lwd Optional. Thickness of edges connecting both tangle trees (default = 1) if tanglegram = T.
 #' @param tanglegram.edge.lwd Optional. Thickness of edges of tangle trees (default = c(0.1, 0.1)) if tanglegram = T.
 #' @param tanglegram.margin Optional. Distance between tangle trees (default = 7) if tanglegram = T.
-#' @param tanglegram.lab.cex Optional. Size of leaf names (default - 0.5) if tanglegram = T.
+#' @param tanglegram.lab.cex Optional. Size of leaf names (default = 0.5) if tanglegram = T.
 #' @param output.tangletree Optional. The output file name if tanglegram = T.
 #' @param dataframe Optional. Write a \code{TSV} file in current directory containing the output dataframe (by default, no \code{TSV} is written).
 #' @param spearman Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = T}).

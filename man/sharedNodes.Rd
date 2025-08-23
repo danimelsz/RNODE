@@ -76,7 +76,7 @@ sharedNodes(
 
 \item{tanglegram.margin}{Optional. Distance between tangle trees (default = 7) if tanglegram = T.}
 
-\item{tanglegram.lab.cex}{Optional. Size of leaf names (default - 0.5) if tanglegram = T.}
+\item{tanglegram.lab.cex}{Optional. Size of leaf names (default = 0.5) if tanglegram = T.}
 
 \item{tanglegram.edge.lwd}{Optional. Thickness of edges of tangle trees (default = c(0.1, 0.1)) if tanglegram = T.}
 

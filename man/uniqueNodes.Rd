@@ -10,7 +10,17 @@ uniqueNodes(
   composition = T,
   outgroup = NULL,
   root = NULL,
-  dataframe = F
+  dataframe = F,
+  dataframe1.name = "Tree1_unique.clades.tsv",
+  dataframe2.name = "Tree2_unique.clades.tsv",
+  plotTrees = F,
+  node.numbers = T,
+  tree.width = NULL,
+  tree.height = NULL,
+  tree.fsize = NULL,
+  tree.adj = NULL,
+  tree.cex = NULL,
+  output.tree = "trees_unique_nodes.pdf"
 )
 }
 \arguments{
@@ -25,6 +35,26 @@ uniqueNodes(
 \item{root}{Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, root = F assumes that trees share the same root)}
 
 \item{dataframe}{Optional. Write a TSV file in current directory containing the output dataframe (by default, dataset = T).}
+
+\item{dataframe1.name}{Optional. Name to write the dataframe 1.}
+
+\item{dataframe2.name}{Optional. Name to write the dataframe 2.}
+
+\item{plotTrees}{Optional. Plot the two trees after taxa pruning in \code{PDF} format. If \code{plot = T}, the user should also adjust \code{PDF} dimensions (e.g. \code{width = 8}, \code{height = 8}), label size (e.g. \code{fsize = 4}), and position and size of support values (e.g. \code{adj = c(-1.5,0.5)}, \code{cex = 0.6}).}
+
+\item{node.numbers}{Optional. If plotTrees = T, show node index (do not confuse with support values'by default, True).}
+
+\item{tree.width}{Optional. Width of trees in PDF if plotTrees = T.}
+
+\item{tree.height}{Optional. Height of trees in PDF if plotTrees = T.}
+
+\item{tree.fsize}{Optional. Font size in PDF if plotTrees = T.}
+
+\item{tree.adj}{Optional. Adjust horizontal and vertical position if plotTrees = T.}
+
+\item{tree.cex}{Optional. Adjust support size in nodes if plotTrees = T.}
+
+\item{output.tree}{Optional. The output file name of tree 1 if plotTrees = T.}
 }
 \description{
 Creates two separate dataframes containing the list of descendants and support values of unique clades between two trees.
