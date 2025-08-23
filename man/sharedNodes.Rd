@@ -12,11 +12,12 @@ sharedNodes(
   root = NULL,
   plotTrees = F,
   node.numbers = T,
-  width = NULL,
-  height = NULL,
-  fsize = NULL,
-  adj = NULL,
-  cex = NULL,
+  tree.width = NULL,
+  tree.height = NULL,
+  tree.fsize = NULL,
+  tree.adj = NULL,
+  tree.cex = NULL,
+  tree2.direction = "rightwards",
   output.tree1 = "tree1_pruned.pdf",
   output.tree2 = "tree2_pruned.pdf",
   tanglegram = F,
@@ -32,7 +33,10 @@ sharedNodes(
   dataframe = F,
   output.dataframe = "shared.nodes.tsv",
   messages = T,
-  spearman = F
+  spearman = F,
+  write.pruned = F,
+  write.pruned1.name = "pruned_tree1.nwk",
+  write.pruned2.name = "pruned_tree2.nwk"
 )
 }
 \arguments{
@@ -50,6 +54,18 @@ sharedNodes(
 
 \item{node.numbers}{Optional. If plotTrees = T, show node index (do not confuse with support values'by default, True).}
 
+\item{tree.width}{Optional. Width of trees in PDF if plotTrees = T.}
+
+\item{tree.height}{Optional. Height of trees in PDF if plotTrees = T.}
+
+\item{tree.fsize}{Optional. Font size in PDF if plotTrees = T.}
+
+\item{tree.adj}{Optional. Adjust horizontal and vertical position if plotTrees = T.}
+
+\item{tree.cex}{Optional. Adjust support size in nodes if plotTrees = T.}
+
+\item{tree2.direction}{Optional. Adjust the direction of tree2 ("leftwards" vs "rightwards") if plotTrees = T.}
+
 \item{output.tree1}{Optional. The output file name of tree 1 if plotTrees = T.}
 
 \item{output.tree2}{Optional. The output file name of tree 2 if plotTrees = T.}
@@ -58,27 +74,33 @@ sharedNodes(
 
 \item{output.tangletree}{Optional. The output file name if tanglegram = T.}
 
-\item{tanglegram.margin}{Optional. Distance between tangle trees (default = 7).}
+\item{tanglegram.margin}{Optional. Distance between tangle trees (default = 7) if tanglegram = T.}
 
-\item{tanglegram.lab.cex}{Optional. Size of leaf names (default - 0.5).}
+\item{tanglegram.lab.cex}{Optional. Size of leaf names (default - 0.5) if tanglegram = T.}
 
-\item{tanglegram.edge.lwd}{Optional. Thickness of edges of tangle trees (default = c(0.1, 0.1)).}
+\item{tanglegram.edge.lwd}{Optional. Thickness of edges of tangle trees (default = c(0.1, 0.1)) if tanglegram = T.}
 
-\item{tanglegram.lwd}{Optional. Thickness of edges connecting both tangle trees (default = 1).}
+\item{tanglegram.lwd}{Optional. Thickness of edges connecting both tangle trees (default = 1) if tanglegram = T.}
 
-\item{tanglegram.axes}{Optional. Show scale in tangle trees (default = F)}
+\item{tanglegram.axes}{Optional. Show scale in tangle trees (default = F) if tanglegram = T.}
 
-\item{tanglegram.width}{Optional. Width of tangle trees in PDF (default = 5).}
+\item{tanglegram.width}{Optional. Width of tangle trees in PDF (default = 5) if tanglegram = T.}
 
-\item{tanglegram.height}{Optional. Height of tangle trees in PDF (default = 5).}
+\item{tanglegram.height}{Optional. Height of tangle trees in PDF (default = 5) if tanglegram = T.}
 
-\item{tanglegram.colors}{Optional. Show color in edges connecting both tangle trees (default = T).}
+\item{tanglegram.colors}{Optional. Show color in edges connecting both tangle trees (default = T) if tanglegram = T.}
 
 \item{dataframe}{Optional. Write a \code{TSV} file in current directory containing the output dataframe (by default, no \code{TSV} is written).}
 
 \item{output.dataframe}{Optional. The output file name of the dataframe if dataframe = T.}
 
 \item{spearman}{Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = T}).}
+
+\item{write.pruned}{Write the pruned trees.}
+
+\item{write.pruned1.name}{Output file name of pruned tree1 if write.pruned = T.}
+
+\item{write.pruned2.name}{Output file name of pruned tree2 if write.pruned = T.}
 }
 \description{
 Compare support values of shared clades between two trees. The outputs are (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.
@@ -93,7 +115,10 @@ sharedNodes (tree1, tree2)
 sharedNodes (tree1, tree2, composition=T, outgroup=c("t9", "t8"), root="t1",)
 
 # Example 3 (plot  two trees)
-sharedNodes (tree1, tree2, plotTrees=T, width=8, height=8, fsize=3, adj=c(-1.5,0.5), cex=0.6)
+sharedNodes (tree1, tree2, plotTrees=T, tree.width=8, tree.height=8, tree.fsize=3, tree.adj=c(-1.5,0.5), tree.cex=0.6)
+
+# Example 4 (plot tangle trees)
+sharedNodes (tree1, tree2, tanglegram=T, tanglegram.margin=7, tanglegram.lab.cex=0.5)
 
 }
 \author{

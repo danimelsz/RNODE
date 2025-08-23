@@ -11,20 +11,29 @@
 #' @param plotTrees Optional. Plot the two trees after taxa pruning in \code{PDF} format. If \code{plot = T}, the user should also adjust \code{PDF} dimensions (e.g. \code{width = 8}, \code{height = 8}), label size (e.g. \code{fsize = 4}), and position and size of support values (e.g. \code{adj = c(-1.5,0.5)}, \code{cex = 0.6}).
 #' @param output.tree1 Optional. The output file name of tree 1 if plotTrees = T.
 #' @param output.tree2 Optional. The output file name of tree 2 if plotTrees = T.
+#' @param tree.width Optional. Width of trees in PDF if plotTrees = T.
+#' @param tree.height Optional. Height of trees in PDF if plotTrees = T.
+#' @param tree.fsize Optional. Font size in PDF if plotTrees = T.
+#' @param tree.adj Optional. Adjust horizontal and vertical position if plotTrees = T.
+#' @param tree.cex Optional. Adjust support size in nodes if plotTrees = T.
+#' @param tree2.direction Optional. Adjust the direction of tree2 ("leftwards" vs "rightwards") if plotTrees = T.
 #' @param node.numbers Optional. If plotTrees = T, show node index (do not confuse with support values'by default, True).
 #' @param tanglegram Optional. Plot a tanglegram minimizing the number of crosses of lines linking two trees in \code{PDF} format. If the input tree has no branch length, uniform lengths are simulated to enable visualization.
-#' @param tanglegram.axes Optional. Show scale in tangle trees (default = F)
-#' @param tanglegram.width Optional. Width of tangle trees in PDF (default = 5).
-#' @param tanglegram.height Optional. Height of tangle trees in PDF (default = 5).
-#' @param tanglegram.colors Optional. Show color in edges connecting both tangle trees (default = T).
-#' @param tanglegram.lwd Optional. Thickness of edges connecting both tangle trees (default = 1).
-#' @param tanglegram.edge.lwd Optional. Thickness of edges of tangle trees (default = c(0.1, 0.1)).
-#' @param tanglegram.margin Optional. Distance between tangle trees (default = 7).
-#' @param tanglegram.lab.cex Optional. Size of leaf names (default - 0.5).
+#' @param tanglegram.axes Optional. Show scale in tangle trees (default = F) if tanglegram = T.
+#' @param tanglegram.width Optional. Width of tangle trees in PDF (default = 5) if tanglegram = T.
+#' @param tanglegram.height Optional. Height of tangle trees in PDF (default = 5) if tanglegram = T.
+#' @param tanglegram.colors Optional. Show color in edges connecting both tangle trees (default = T) if tanglegram = T.
+#' @param tanglegram.lwd Optional. Thickness of edges connecting both tangle trees (default = 1) if tanglegram = T.
+#' @param tanglegram.edge.lwd Optional. Thickness of edges of tangle trees (default = c(0.1, 0.1)) if tanglegram = T.
+#' @param tanglegram.margin Optional. Distance between tangle trees (default = 7) if tanglegram = T.
+#' @param tanglegram.lab.cex Optional. Size of leaf names (default - 0.5) if tanglegram = T.
 #' @param output.tangletree Optional. The output file name if tanglegram = T.
 #' @param dataframe Optional. Write a \code{TSV} file in current directory containing the output dataframe (by default, no \code{TSV} is written).
 #' @param spearman Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = T}).
 #' @param output.dataframe Optional. The output file name of the dataframe if dataframe = T.
+#' @param write.pruned Write the pruned trees.
+#' @param write.pruned1.name Output file name of pruned tree1 if write.pruned = T.
+#' @param write.pruned2.name Output file name of pruned tree2 if write.pruned = T.
 #'
 #' @examples
 #' # Example 1 (simplest case)
@@ -36,17 +45,21 @@
 #' sharedNodes (tree1, tree2, composition=T, outgroup=c("t9", "t8"), root="t1",)
 #'
 #' # Example 3 (plot  two trees)
-#' sharedNodes (tree1, tree2, plotTrees=T, width=8, height=8, fsize=3, adj=c(-1.5,0.5), cex=0.6)
+#' sharedNodes (tree1, tree2, plotTrees=T, tree.width=8, tree.height=8, tree.fsize=3, tree.adj=c(-1.5,0.5), tree.cex=0.6)
+#'
+#' # Example 4 (plot tangle trees)
+#' sharedNodes (tree1, tree2, tanglegram=T, tanglegram.margin=7, tanglegram.lab.cex=0.5)
 #'
 #' @export
 sharedNodes = function (tree1,tree2,
                         composition=F,
                         outgroup=NULL,
                         root=NULL,
-                        plotTrees=F, node.numbers=T, width=NULL, height=NULL, fsize=NULL, adj=NULL, cex=NULL, output.tree1="tree1_pruned.pdf", output.tree2="tree2_pruned.pdf",
+                        plotTrees=F, node.numbers=T, tree.width=NULL, tree.height=NULL, tree.fsize=NULL, tree.adj=NULL, tree.cex=NULL, tree2.direction="rightwards", output.tree1="tree1_pruned.pdf", output.tree2="tree2_pruned.pdf",
                         tanglegram=F, output.tangletree="tanglegram_comparison.pdf", tanglegram.margin=7, tanglegram.lab.cex=0.5, tanglegram.edge.lwd=c(0.1, 0.1), tanglegram.lwd=1, tanglegram.axes=F, tanglegram.width=5, tanglegram.height=5, tanglegram.colors=T,
                         dataframe=F, output.dataframe="shared.nodes.tsv", messages=T,
-                        spearman=F){
+                        spearman=F,
+                        write.pruned=F, write.pruned1.name="pruned_tree1.nwk", write.pruned2.name="pruned_tree2.nwk"){
   # Initial warnings
   missing_params <- c()
   if (is.null(tree1)) missing_params <- c(missing_params, "tree1")
@@ -91,19 +104,19 @@ sharedNodes = function (tree1,tree2,
 
   # If specified, plot trees with node index (inside squares) and support values
   if (plotTrees) {
-    pdf(file=output.tree1, width = width, height = height)  # Save plotted tree to PDF, adjust width and height as needed
-    plotTree(tree1_pruned, fsize = fsize, ftype="i", node.numbers=node.numbers, color="blue") # Adjust font size as needed
+    pdf(file=output.tree1, width = tree.width, height = tree.height)  # Save plotted tree to PDF, adjust width and height as needed
+    plotTree(tree1_pruned, fsize = tree.fsize, ftype="i", node.numbers=node.numbers, color="blue") # Adjust font size as needed
     nodelabels(tree1_pruned$node.label,
-               adj=adj, # Adjust horizontal and vertical position
+               adj=tree.adj, # Adjust horizontal and vertical position
                frame="none", # Specify the borders of support values
-               cex=cex) # Adjust the size of support values
+               cex=tree.cex) # Adjust the size of support values
     dev.off()
-    pdf(file=output.tree2, width = width, height = height)  # Save plotted tree to PDF, adjust width and height as needed
-    plotTree(tree2_pruned, fsize = fsize, ftype="i", node.numbers=node.numbers, color="red") # Adjust font size as needed
+    pdf(file=output.tree2, width = tree.width, height = tree.height)  # Save plotted tree to PDF, adjust width and height as needed
+    plotTree(tree2_pruned, fsize = tree.fsize, ftype="i", node.numbers=node.numbers, color="red", direction=tree2.direction) # Adjust font size as needed
     nodelabels(tree2_pruned$node.label,
-               adj=adj, # Adjust horizontal and vertical position
+               adj=tree.adj, # Adjust horizontal and vertical position
                frame="none", # Specify borders of support values
-               cex=cex) # Adjust support size
+               cex=tree.cex) # Adjust support size
     dev.off()
   }
 
@@ -111,6 +124,12 @@ sharedNodes = function (tree1,tree2,
   if (!is.null(root)) {
     tree1_pruned <- root(tree1_pruned, outgroup = root)
     tree2_pruned <- root(tree2_pruned, outgroup = root)
+  }
+
+  # If specified, write the pruned trees
+  if (write.pruned){
+    write.tree(tree1_pruned, file=write.pruned1.name)
+    write.tree(tree2_pruned, file=write.pruned2.name)
   }
 
   ##########################
