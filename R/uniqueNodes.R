@@ -138,7 +138,7 @@ uniqueNodes = function(tree1, tree2,
     n_NA_support_values <- gsub("=", "", n_NA_support_values) # Clean the support values (remove "=" symbol if present)
     print(n_NA_support_values)}
 
-  # Looping to store descendants from unique clades in tree1
+  # Looping to store descendants from unique clades in tree2
   c2_NA = c() # empty vector
   for (i in n_NA + length(tree2_pruned$tip.label)) {
     c2_NA.temp = extract.clade(tree2_pruned, i)
@@ -159,7 +159,7 @@ uniqueNodes = function(tree1, tree2,
   else if (composition==F && is.null(tree2_pruned$node.label)){
     df_unique_Tree2 <- data.frame(Node = n_NA + length(tree2_pruned$tip.label))}
   else if (composition==T && is.null(tree2_pruned$node.label)){
-    df_unique_Tree2 <- data.frame(Node = m_NA + length(tree2_pruned$tip.label),
+    df_unique_Tree2 <- data.frame(Node = n_NA + length(tree2_pruned$tip.label),
                                   Descendants = c1_NA)
     }
   if (dataframe){write.table(df_unique_Tree2, file=dataframe2.name, sep = "\t", row.names = FALSE)}
@@ -177,7 +177,7 @@ uniqueNodes = function(tree1, tree2,
     nodelabels(node=df_unique_Tree1$Node,
                cex=tree.cex, # Adjust the size of circles
                pch=21, bg="blue")
-    plotTree(tree2_pruned, fsize = tree.fsize, node.numbers=node.numbers, color="black", direction="leftwards") # Adjust font size as needed
+    plotTree(tree2_pruned, fsize = tree.fsize, ftype="i", node.numbers=node.numbers, color="black", direction="leftwards") # Adjust font size as needed
     nodelabels(node=df_unique_Tree2$Node,
                cex=tree.cex, # Adjust the size of circles
                pch=21, bg="red")
