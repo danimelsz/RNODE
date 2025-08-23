@@ -15,11 +15,11 @@ uniqueNodes(
   dataframe2.name = "Tree2_unique.clades.tsv",
   plotTrees = F,
   node.numbers = T,
-  tree.width = NULL,
-  tree.height = NULL,
-  tree.fsize = NULL,
-  tree.adj = NULL,
-  tree.cex = NULL,
+  tree.width = 10,
+  tree.height = 10,
+  tree.fsize = 0.5,
+  tree.adj = c(-1.5, 0.5),
+  tree.cex = 2,
   output.tree = "trees_unique_nodes.pdf"
 )
 }
@@ -69,6 +69,11 @@ uniqueNodes (tree1, tree2)
 tree1 = read.tree (text="(t1,(t2,(t3,(t4,t5)75)32)45);")
 tree2 = read.tree (text="(t1,(t6,(t3,(t4,t5)47)53)94);")
 nrow (uniqueNodes (tree1, tree2, composition = F))
+
+# Exmple 3 (highlight unique nodes in plotting)
+tree1 = read.tree (text="(t1,(t2,(t3,(t4,t5)75)32)45);")
+tree2 = read.tree (text="(t1,(t6,(t3,(t4,t5)47)53)94);")
+uniqueNodes (tree1, tree2, plotTrees=T, node.numbers=F, tree.width=14, tree.height=17, tree.fsize=0.8, tree.adj=c(-1.5,0.5), tree.cex=2)
 
 }
 \author{

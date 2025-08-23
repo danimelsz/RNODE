@@ -31,13 +31,18 @@
 #' tree2 = read.tree (text="(t1,(t6,(t3,(t4,t5)47)53)94);")
 #' nrow (uniqueNodes (tree1, tree2, composition = F))
 #'
+#' # Exmple 3 (highlight unique nodes in plotting)
+#' tree1 = read.tree (text="(t1,(t2,(t3,(t4,t5)75)32)45);")
+#' tree2 = read.tree (text="(t1,(t6,(t3,(t4,t5)47)53)94);")
+#' uniqueNodes (tree1, tree2, plotTrees=T, node.numbers=F, tree.width=14, tree.height=17, tree.fsize=0.8, tree.adj=c(-1.5,0.5), tree.cex=2)
+#'
 #' @export
 uniqueNodes = function(tree1, tree2,
                        composition=T,
                        outgroup=NULL,
                        root=NULL,
                        dataframe=F, dataframe1.name="Tree1_unique.clades.tsv", dataframe2.name="Tree2_unique.clades.tsv",
-                       plotTrees=F, node.numbers=T, tree.width=NULL, tree.height=NULL, tree.fsize=NULL, tree.adj=NULL, tree.cex=NULL, output.tree="trees_unique_nodes.pdf"){
+                       plotTrees=F, node.numbers=T, tree.width=10, tree.height=10, tree.fsize=0.5, tree.adj=c(-1.5,0.5), tree.cex=2, output.tree="trees_unique_nodes.pdf"){
   # Initial warnings
   missing_params <- c()
   if (is.null(tree1)) missing_params <- c(missing_params, "tree1")
@@ -160,7 +165,7 @@ uniqueNodes = function(tree1, tree2,
     df_unique_Tree2 <- data.frame(Node = n_NA + length(tree2_pruned$tip.label))}
   else if (composition==T && is.null(tree2_pruned$node.label)){
     df_unique_Tree2 <- data.frame(Node = n_NA + length(tree2_pruned$tip.label),
-                                  Descendants = c1_NA)
+                                  Descendants = c2_NA)
     }
   if (dataframe){write.table(df_unique_Tree2, file=dataframe2.name, sep = "\t", row.names = FALSE)}
 
@@ -171,7 +176,7 @@ uniqueNodes = function(tree1, tree2,
   # If specified, plot trees with node index (inside squares) and support values
   if (plotTrees) {
     pdf(file=output.tree, width = tree.width, height = tree.height)  # Save plotted tree to PDF, adjust width and height as needed
-    par(mfrow = c(1, 2))
+    par(mfrow = c(1, 2), oma=c(1,0.5,1,0.5))
     # Tree 1
     plotTree(tree1_pruned, fsize = tree.fsize, ftype="i", node.numbers=node.numbers, color="black") # Adjust font size as needed
     nodelabels(node=df_unique_Tree1$Node,
