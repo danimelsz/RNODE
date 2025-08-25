@@ -1,5 +1,5 @@
 #' @title mapSupport
-#' @name pasteSupport
+#' @name mapSupport
 #' @description Given a tree 1 without support values (e.g. strict consensus of optimal trees) and tree 2 with support values (e.g. majority consensus from suboptimal bootstrap pseudo-replicates), return tree 1 with support values from shared clades with tree 2.
 #' @author Daniel YM Nakamura
 #'
@@ -12,10 +12,10 @@
 #' # Example 1 (identify unique nodes)
 #' tree1 = read.tree (text="(t1,(t3,(t2,(t4,t5))));")
 #' tree2 = read.tree (text="(t1,(t2,(t3,(t4,t5)47)53)94);")
-#' pasteSupport (tree1, tree2)
+#' mapSupport (tree1, tree2)
 #'
 #' @export
-pasteSupport = function (tree1,tree2,
+mapSupport = function (tree1,tree2,
                          write=NULL,
                          outgroup=NULL,
                          root=NULL
