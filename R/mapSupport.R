@@ -8,6 +8,14 @@
 #' @param write Optional. Specify the name of tree file to be written locally (nothing is written if this parameter is not specified)
 #' @param outgroup Optional. Specify outgroup taxa to remove (by default, outgroup = F assumes that the user does not want to remove outgroup taxa)
 #' @param root Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, root = F assumes that trees share the same root)
+#' @param plotTrees Optional. Plot the two trees after taxa pruning in \code{PDF} format. If \code{plot = T}, the user should also adjust \code{PDF} dimensions (e.g. \code{width = 8}, \code{height = 8}), label size (e.g. \code{fsize = 4}), and position and size of support values (e.g. \code{adj = c(-1.5,0.5)}, \code{cex = 0.6}).
+#' @param tree.output Optional. Name of the output figure.
+#' @param tree.width Optional. Width of trees in PDF if plotTrees = T.
+#' @param tree.height Optional. Height of trees in PDF if plotTrees = T.
+#' @param tree.fsize Optional. Font size in PDF if plotTrees = T.
+#' @param tree.adj Optional. Adjust horizontal and vertical position if plotTrees = T.
+#' @param tree.cex Optional. Adjust support size in nodes if plotTrees = T.
+#' @param node.numbers Optional. If plotTrees = T, show node index (do not confuse with support values'by default, True).
 #' @examples
 #' # Example 1 (identify unique nodes)
 #' tree1 = read.tree (text="(t1,(t3,(t2,(t4,t5))));")
@@ -16,10 +24,11 @@
 #'
 #' @export
 mapSupport = function (tree1,tree2,
-                         write=NULL,
-                         outgroup=NULL,
-                         root=NULL
-                         ){
+                       write=NULL,
+                       outgroup=NULL,
+                       root=NULL,
+                       plotTrees=F, node.numbers=T, tree.width=10, tree.height=10, tree.fsize=0.5, tree.adj=c(-1.5,0.5), tree.cex=2, tree.output="trees_unique_nodes.pdf"
+                      ){
   # Initial warnings
   missing_params <- c()
   if (is.null(tree1)) missing_params <- c(missing_params, "tree1")
@@ -78,6 +87,31 @@ mapSupport = function (tree1,tree2,
   if (!is.null(write)) {
     file_name = paste0(write, ".nwk")
     write.tree(ladderize(tree1_pruned, right=T), file=file_name)
+  }
+
+  #######################################
+  # PLOTTING HIGHLIGHTING UNIQUE CLADES #
+  #######################################
+
+  # If specified, plot trees with node index (inside squares) and support values
+  if (plotTrees) {
+    pdf(file=tree.output, width = tree.width, height = tree.height)  # Save plotted tree to PDF, adjust width and height as needed
+    par(mfrow = c(1, 2), oma=c(1,0.5,1,0.5))
+    # Tree 1
+    plotTree(tree1_pruned, fsize = tree.fsize, ftype="i", node.numbers=node.numbers, color="black") # Adjust font size as needed
+    df_unique = uniqueNodes(tree1_pruned, tree2_pruned)
+    nodelabels(node=df_unique[[1]]$Node,
+               cex=tree.cex, # Adjust the size of circles
+               pch=21, bg="blue")
+    nodelabels(tree1_pruned$node.label,
+               cex = tree.cex,       # font size
+               frame = "none",  # no box
+               adj = tree.adj) # adjust position
+    plotTree(tree2_pruned, fsize = tree.fsize, ftype="i", node.numbers=node.numbers, color="black", direction="leftwards") # Adjust font size as needed
+    nodelabels(node=df_unique[[2]]$Node,
+               cex=tree.cex, # Adjust the size of circles
+               pch=21, bg="red")
+    dev.off()
   }
 
   return (list(tree1_pruned, m))

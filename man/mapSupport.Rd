@@ -4,7 +4,21 @@
 \alias{mapSupport}
 \title{mapSupport}
 \usage{
-mapSupport(tree1, tree2, write = NULL, outgroup = NULL, root = NULL)
+mapSupport(
+  tree1,
+  tree2,
+  write = NULL,
+  outgroup = NULL,
+  root = NULL,
+  plotTrees = F,
+  node.numbers = T,
+  tree.width = 10,
+  tree.height = 10,
+  tree.fsize = 0.5,
+  tree.adj = c(-1.5, 0.5),
+  tree.cex = 2,
+  tree.output = "trees_unique_nodes.pdf"
+)
 }
 \arguments{
 \item{tree1}{A phylo object without support values}
@@ -16,6 +30,22 @@ mapSupport(tree1, tree2, write = NULL, outgroup = NULL, root = NULL)
 \item{outgroup}{Optional. Specify outgroup taxa to remove (by default, outgroup = F assumes that the user does not want to remove outgroup taxa)}
 
 \item{root}{Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, root = F assumes that trees share the same root)}
+
+\item{plotTrees}{Optional. Plot the two trees after taxa pruning in \code{PDF} format. If \code{plot = T}, the user should also adjust \code{PDF} dimensions (e.g. \code{width = 8}, \code{height = 8}), label size (e.g. \code{fsize = 4}), and position and size of support values (e.g. \code{adj = c(-1.5,0.5)}, \code{cex = 0.6}).}
+
+\item{node.numbers}{Optional. If plotTrees = T, show node index (do not confuse with support values'by default, True).}
+
+\item{tree.width}{Optional. Width of trees in PDF if plotTrees = T.}
+
+\item{tree.height}{Optional. Height of trees in PDF if plotTrees = T.}
+
+\item{tree.fsize}{Optional. Font size in PDF if plotTrees = T.}
+
+\item{tree.adj}{Optional. Adjust horizontal and vertical position if plotTrees = T.}
+
+\item{tree.cex}{Optional. Adjust support size in nodes if plotTrees = T.}
+
+\item{tree.output}{Optional. Name of the output figure.}
 }
 \description{
 Given a tree 1 without support values (e.g. strict consensus of optimal trees) and tree 2 with support values (e.g. majority consensus from suboptimal bootstrap pseudo-replicates), return tree 1 with support values from shared clades with tree 2.
