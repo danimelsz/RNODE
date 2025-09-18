@@ -8,7 +8,7 @@
 #' @param write Optional. Specify the name of tree file to be written locally (nothing is written if this parameter is not specified)
 #' @param outgroup Optional. Specify outgroup taxa to remove (by default, outgroup = F assumes that the user does not want to remove outgroup taxa)
 #' @param root Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, root = F assumes that trees share the same root)
-#' @param plotTrees Optional. Plot the two trees after taxa pruning in \code{PDF} format. If \code{plot = T}, the user should also adjust \code{PDF} dimensions (e.g. \code{width = 8}, \code{height = 8}), label size (e.g. \code{fsize = 4}), and position and size of support values (e.g. \code{adj = c(-1.5,0.5)}, \code{cex = 0.6}).
+#' @param plotTrees Optional. Plot the two trees (tree1 with support values on left and tree2 on right) in \code{PDF} format. If \code{plot = T}, the user should also adjust \code{PDF} dimensions (e.g. \code{width = 8}, \code{height = 8}), label size (e.g. \code{fsize = 4}), and position and size of support values (e.g. \code{adj = c(-1.5,0.5)}, \code{cex = 0.6}).
 #' @param tree.output Optional. Name of the output figure.
 #' @param tree.width Optional. Width of trees in PDF if plotTrees = T.
 #' @param tree.height Optional. Height of trees in PDF if plotTrees = T.
@@ -59,6 +59,10 @@ mapSupport = function (tree1,tree2,
     tree1_pruned <- root(tree1_pruned, outgroup = root)
     tree2_pruned <- root(tree2_pruned, outgroup = root)
   }
+
+  # Ladderize trees
+  tree1_pruned = ladderize(tree1_pruned, right = TRUE) # Sort nodes in the tree according to clade size
+  tree2_pruned = ladderize(tree2_pruned, right = TRUE) # Sort nodes in the tree according to clade size
 
   ########################
   # PASTE SUPPORT VALUES #
@@ -111,6 +115,10 @@ mapSupport = function (tree1,tree2,
     nodelabels(node=df_unique[[2]]$Node,
                cex=tree.cex, # Adjust the size of circles
                pch=21, bg="red")
+    nodelabels(tree2_pruned$node.label,
+               cex = tree.cex,       # font size
+               frame = "none",  # no box
+               adj = tree.adj) # adjust position
     dev.off()
   }
 
