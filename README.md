@@ -41,25 +41,31 @@ The following examples are designed for users with little experience. If you hav
 Using simple simulations, we can demonstrate how to compare support values between trees. We first simulate two trees containing support values: 
 
 ```
-# Simulate two trees
 set.seed(44)
-a = pbtree(n=7) # initial tree a
-node_labels = sample(1:100, a$Nnode, replace = TRUE) # generate random node labels as integers to tree a
-a$node.label = node_labels # add the node labels to tree a
+# Simulate tree a
+a = pbtree(n=7) 
+# Generate random support values as integers to tree a
+node_labels = sample(1:100, a$Nnode, replace = TRUE) 
+# Add the support values as node labels to tree a
+a$node.label = node_labels 
+
 set.seed(88)
-b = pbtree(n=7) # initial tree b
-node_labels = sample(1:100, b$Nnode, replace = TRUE) # generate random node labels as integers to tree a
-b$node.label = node_labels # Set the node labels to tree b
+# Simulate tree b
+b = pbtree(n=7)
+# Generate random support values as integers to tree b
+node_labels = sample(1:100, b$Nnode, replace = TRUE) 
+# Add the support values as node labels to tree b
+b$node.label = node_labels 
 ```
 
 Next, we run *sharedNodes* to identify matching clades and their descendants and support values. Additionally, we also can plot the trees.
 
 ```
-# Compare shared clades and support values
+# Compare shared clades and support values (and plot)
 df = sharedNodes(tree1=a, tree2=b, composition=T, 
                  plotTrees = T,
-                 output.tree1="example1_simulated1.pdf",
-                 output.tree2="example1_simulated2.pdf", 
+                 output.tree1="example1.1_simulated1.pdf",
+                 output.tree2="example1.1_simulated2.pdf", 
                  tree.width = 3, # adjust tree width
                  tree.height = 4, # adjust tree height
                  tree.fsize = 1, # adjust font size
@@ -67,6 +73,11 @@ df = sharedNodes(tree1=a, tree2=b, composition=T,
                  tree.cex=.5, # adjust support size
                  node.numbers=T) # show node index
 ```
+
+<p align="center">
+  <a href="tutorial/example1.1_df.png"><img src="tutorial/example1.1_df.png" alt="df" width="45%"></a>
+</p>
+
 
 <p align="center">
   <a href="tutorial/example1_simulated1.png"><img src="tutorial/example1_simulated1.png" alt="Fig 1" width="45%"></a>

@@ -53,8 +53,8 @@ b$node.label = node_labels # Set the node labels to tree b
 # Run 
 df = sharedNodes(tree1=a, tree2=b, composition=T, 
                  plotTrees = T,
-                 output.tree1="example1_simulated1.pdf",
-                 output.tree2="example1_simulated2.pdf", 
+                 output.tree1="example1.1_simulated1.pdf",
+                 output.tree2="example1.1_simulated2.pdf", 
                  tree.width = 3, # adjust tree width
                  tree.height = 4, # adjust tree height
                  tree.fsize = 1, # adjust font size
