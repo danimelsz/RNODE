@@ -68,11 +68,10 @@ df = sharedNodes(tree1=a, tree2=b, composition=T,
                  node.numbers=T) # show node index
 ```
 
-<p align="center">
-  <a href="tutorial/example1_simulated1.pdf"><img src="tutorial/example1_simulated1.pdf" alt="Fig 1" width="45%"></a>
-  <a href="tutorial/example1_simulated2.pdf"><img src="tutorial/example1_simulated2.pdf" alt="Fig 2" width="45%"></a>
-</p>
-
+| Figure 1 | Figure 2 |
+|:-------:|:-------:|
+| [<img src="tutorial/example1_simulated1.pdf" width="300"/>](tutorial/example1_simulated1.pdf) | [<img src="tutorial/example1_simulated2.pdf" width="300"/>](tutorial/example1_simulated2.pdf) |
+| *A: Description of fig1.* | *B: Description of fig2.* |
 
 
 ### Example 2: Comparison of topologies
