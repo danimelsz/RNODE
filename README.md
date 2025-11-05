@@ -99,6 +99,9 @@ uniqueNodes(a, b, composition=T, dataframe=T,
             )
 ```
 
+<p align="center">
+  <a href="tutorial/example1.1_unique.png"><img src="tutorial/example1.1_unique.png" alt="df" width="100%"></a>
+</p>
 
 #### Example 1.2 Empirical example
 
