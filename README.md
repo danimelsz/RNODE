@@ -80,8 +80,8 @@ df = sharedNodes(tree1=a, tree2=b, composition=T,
 
 
 <p align="center">
-  <a href="tutorial/example1_simulated1.png"><img src="tutorial/example1_simulated1.png" alt="Fig 1" width="45%"></a>
-  <a href="tutorial/example1_simulated2.png"><img src="tutorial/example1_simulated2.png" alt="Fig 2" width="45%"></a>
+  <a href="tutorial/example1.1_simulated1.png"><img src="tutorial/example1.1_simulated1.png" alt="Fig 1" width="45%"></a>
+  <a href="tutorial/example1.1_simulated2.png"><img src="tutorial/example1.1_simulated2.png" alt="Fig 2" width="45%"></a>
 </p>
 
 
