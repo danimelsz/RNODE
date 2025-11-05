@@ -23,7 +23,7 @@ Dependencies are expected to be automatically installed.
 The following functions are available in **RNODE**:
 
 | Function                  | Description |
-|---------------------------|-----------|
+|:--------|:--------:|
 | *sharedNodes*             | Compare support values of shared clades between two trees. The outputs are (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.  |
 | *uniqueNodes*             | Data 3    |
 | *retrodictNodes*          | Data 3    |
