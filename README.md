@@ -38,6 +38,8 @@ The following examples are designed for users with little experience. If you hav
 
 ### Example 1: Comparison of support values and branch lengths between trees
 
+#### Example 1.1 Simulated example
+
 Using simple simulations, we can demonstrate how to compare support values between trees. We first simulate two trees containing support values: 
 
 ```
@@ -84,6 +86,21 @@ df = sharedNodes(tree1=a, tree2=b, composition=T,
   <a href="tutorial/example1.1_simulated2.png"><img src="tutorial/example1.1_simulated2.png" alt="Fig 2" width="45%"></a>
 </p>
 
+Alternatively, we can identify and plot the unique clades:
+
+```
+uniqueNodes(a, b, composition=T, dataframe=T,
+            plotTrees=T, output.tree = "example1.1_unique.pdf",
+            node.numbers=T, 
+            tree.fsize=2, # adjust text size
+            tree.cex=7.5, # adjust circle size
+            sup.adj1=c(-.2,4), # adjust support from tree a
+            sup.adj2=c(1.3,4) # adjust support from tree b
+            )
+```
+
+
+#### Example 1.2 Empirical example
 
 ### Example 2: Comparison of topologies
 

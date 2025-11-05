@@ -19,6 +19,10 @@
 #' @param tree.adj Optional. Adjust horizontal and vertical position if plotTrees = T.
 #' @param tree.cex Optional. Adjust support size in nodes if plotTrees = T.
 #' @param node.numbers Optional. If plotTrees = T, show node index (do not confuse with support values'by default, True).
+#' @param sup Optional. Optional. Plot support values (by default, sup = T).
+#' @param sup.adj1 Optional. If sup = T, adjust horizontal and vertical position of support values on tree1.
+#' @param sup.adj2 Optional. If sup = T, adjust horizontal and vertical position of support values on tree2.
+#' @param sup.cex Optional. If sup = T, adjust font size of support values on tree1.
 #'
 #' @examples
 #' # Example 1 (identify unique nodes)
@@ -42,7 +46,9 @@ uniqueNodes = function(tree1, tree2,
                        outgroup=NULL,
                        root=NULL,
                        dataframe=F, dataframe1.name="Tree1_unique.clades.tsv", dataframe2.name="Tree2_unique.clades.tsv",
-                       plotTrees=F, node.numbers=T, tree.width=10, tree.height=10, tree.fsize=0.5, tree.adj=c(-1.5,0.5), tree.cex=2, output.tree="trees_unique_nodes.pdf"){
+                       plotTrees=F, node.numbers=T, tree.width=10, tree.height=10, tree.fsize=0.5, tree.adj=c(-1.5,0.5), tree.cex=2,
+                       sup=T, sup.adj1=c(-1, 1), sup.adj2=c(1,1), sup.cex=1,
+                       output.tree="trees_unique_nodes.pdf"){
   # Initial warnings
   missing_params <- c()
   if (is.null(tree1)) missing_params <- c(missing_params, "tree1")
@@ -176,16 +182,30 @@ uniqueNodes = function(tree1, tree2,
   # If specified, plot trees with node index (inside squares) and support values
   if (plotTrees) {
     pdf(file=output.tree, width = tree.width, height = tree.height)  # Save plotted tree to PDF, adjust width and height as needed
-    par(mfrow = c(1, 2), oma=c(1,0.5,1,0.5))
+    par(mfrow = c(1, 2), oma=c(1,0.2,1,0.2))
+
     # Tree 1
     plotTree(tree1_pruned, fsize = tree.fsize, ftype="i", node.numbers=node.numbers, color="black") # Adjust font size as needed
     nodelabels(node=df_unique_Tree1$Node,
                cex=tree.cex, # Adjust the size of circles
                pch=21, bg="blue")
+    if (sup) {
+      nodelabels(tree1_pruned$node.label,
+                 adj=sup.adj1, # Adjust horizontal and vertical position
+                 frame="none", # Specify the borders of support values
+                 cex=sup.cex) # Adjust the size of support values
+    }
+    # Tree 2
     plotTree(tree2_pruned, fsize = tree.fsize, ftype="i", node.numbers=node.numbers, color="black", direction="leftwards") # Adjust font size as needed
     nodelabels(node=df_unique_Tree2$Node,
                cex=tree.cex, # Adjust the size of circles
                pch=21, bg="red")
+    if (sup) {
+      nodelabels(tree2_pruned$node.label,
+               adj=sup.adj2, # Adjust horizontal and vertical position
+               frame="none", # Specify borders of support values
+               cex=sup.cex) # Adjust support size
+    }
     dev.off()
   }
 

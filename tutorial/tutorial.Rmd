@@ -24,6 +24,8 @@ library(RNODE)
 
 # 2. Example 1: Comparison of support values between trees
 
+## 2.1 Simulated data
+
 Comparisons between phylogenetic trees are usually performed using topological distance metrics (e.g. Robinson-Foulds and SPR distances) but comparisons of support values between corresponding nodes are usually neglected. We propose the function **sharedNodes** to create a dataframe with node labels, descendants, and support values of shared clades between two phylogenetic trees, which facilitates descriptive and statistical comparisons of support values between corresponding nodes. Two examples are provided below.
 
 First, we can demonstrate this function using two simulated trees with the same composition of terminals but different topologies. Notice that *composition = T* will show the composition of each clade in the output dataframe.
@@ -61,8 +63,23 @@ df = sharedNodes(tree1=a, tree2=b, composition=T,
                  tree.adj=c(1.2,3), # adjust support position
                  tree.cex=.5, # adjust support size
                  node.numbers=T) # show node index
-View(df)
 ```
+
+In contrast to **compareNodes**, the list of descendants and support values of unique clades from each tree can be assessed using **uniqueNodes**.
+
+```{r}
+uniqueNodes(a, b, composition=T, dataframe=T,
+            plotTrees=T, output.tree = "example1.1_unique.pdf",
+            node.numbers=T, 
+            tree.fsize=2, # adjust text size
+            tree.cex=7.5, # adjust circle size
+            sup.adj1=c(-.2,4), # adjust support from tree a
+            sup.adj2=c(1.3,4) # adjust support from tree b
+            )
+```
+
+
+
 
 Second, we can use **compareNodes** to compare two empirical trees in .nwk format estimated in TNT (datasets from Ruane et al. 2015). One tree was estimated with Sanger-based data, whereas the other one was estimated with AHE data. Polytomous nodes and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees.
 
@@ -114,38 +131,12 @@ ggplot(df, aes(as.numeric(Support_Tree_1), as.numeric(Support_Tree_2), color=pc)
 
 As expected, there is a denser concentration of shared clades with higher values of support, whereas only a few poorly supported clades are shared by both trees.
 
-## 2.2 *uniqueNodes*
 
-In contrast to **compareNodes**, the list of descendants and support values of unique clades from each tree can be assessed using **uniqueNodes**.
 
-```{r}
-# Simulate two trees
-set.seed(44)
-a = pbtree(n=7) # initial tree a
-node_labels = sample(1:100, a$Nnode, replace = TRUE) # generate random node labels as integers to tree a
-a$node.label = node_labels # add the node labels to tree a
-set.seed(88)
-b = pbtree(n=7) # initial tree b
-node_labels = sample(1:100, b$Nnode, replace = TRUE) # Generate random node labels as integers to tree a
-b$node.label = node_labels # Set the node labels to tree b
 
-# Visualize trees
-layout(c(1,2))
-plotTree(ladderize(a, right = T),node.numbers=T, color="blue")
-nodelabels(a$node.label,
-           adj=c(1.9, 1.7), # horizontal and vertical position
-           frame="none")
-plotTree(ladderize(b, right = T),node.numbers=T, color="red")
-nodelabels(b$node.label,
-           adj=c(2, 1.7), # horizontal and vertical position
-           frame="none")
 
-s = RNODE::sharedNodes(a, b, spearman=F)
-u = RNODE::uniqueNodes(a, b, composition = F)
 
-setwd("./../../../B3_RNODE/")
-RNODE::sharedNodes(a,b,tanglegram=T)
-```
+
 
 ## 2.3 pairwiseTopologies: Creates a pairwise matrix of topological distances; plot using heat map
 

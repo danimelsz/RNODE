@@ -20,6 +20,10 @@ uniqueNodes(
   tree.fsize = 0.5,
   tree.adj = c(-1.5, 0.5),
   tree.cex = 2,
+  sup = T,
+  sup.adj1 = c(-1, 1),
+  sup.adj2 = c(1, 1),
+  sup.cex = 1,
   output.tree = "trees_unique_nodes.pdf"
 )
 }
@@ -53,6 +57,14 @@ uniqueNodes(
 \item{tree.adj}{Optional. Adjust horizontal and vertical position if plotTrees = T.}
 
 \item{tree.cex}{Optional. Adjust support size in nodes if plotTrees = T.}
+
+\item{sup}{Optional. Optional. Plot support values (by default, sup = T).}
+
+\item{sup.adj1}{Optional. If sup = T, adjust horizontal and vertical position of support values on tree1.}
+
+\item{sup.adj2}{Optional. If sup = T, adjust horizontal and vertical position of support values on tree2.}
+
+\item{sup.cex}{Optional. If sup = T, adjust font size of support values on tree1.}
 
 \item{output.tree}{Optional. The output file name of tree 1 if plotTrees = T.}
 }

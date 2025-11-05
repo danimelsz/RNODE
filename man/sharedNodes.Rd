@@ -94,7 +94,7 @@ sharedNodes(
 
 \item{output.dataframe}{Optional. The output file name of the dataframe if dataframe = T.}
 
-\item{spearman}{Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = T}).}
+\item{spearman}{Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = F}).}
 
 \item{write.pruned}{Write the pruned trees.}
 
