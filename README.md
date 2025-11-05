@@ -75,7 +75,7 @@ df = sharedNodes(tree1=a, tree2=b, composition=T,
 ```
 
 <p align="center">
-  <a href="tutorial/example1.1_df.png"><img src="tutorial/example1.1_df.png" alt="df" width="45%"></a>
+  <a href="tutorial/example1.1_df.png"><img src="tutorial/example1.1_df.png" alt="df" width="100%"></a>
 </p>
 
 
