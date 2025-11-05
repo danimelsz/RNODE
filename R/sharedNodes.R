@@ -29,7 +29,7 @@
 #' @param tanglegram.lab.cex Optional. Size of leaf names (default = 0.5) if tanglegram = T.
 #' @param output.tangletree Optional. The output file name if tanglegram = T.
 #' @param dataframe Optional. Write a \code{TSV} file in current directory containing the output dataframe (by default, no \code{TSV} is written).
-#' @param spearman Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = T}).
+#' @param spearman Optional. Test the correlation between support values using a Spearman test (by default, \code{spearman = F}).
 #' @param output.dataframe Optional. The output file name of the dataframe if dataframe = T.
 #' @param write.pruned Write the pruned trees.
 #' @param write.pruned1.name Output file name of pruned tree1 if write.pruned = T.

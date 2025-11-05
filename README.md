@@ -16,7 +16,7 @@ Copyright (C) Daniel Y. M. Nakamura 2025
 devtools::install_github("danimelsz/RNODE")
 ```
 
-Dependencies are expected to be automatically installed. 
+**RNODE** was tested in R. v. 4.2.2. Dependencies are expected to be automatically installed. Alternatively, try to install manually *ape*, *dendextend*, *phangorn*, *phytools*, *stringr*, *TreeDist*, and *TreeTools*.
 
 ## Usage
 
@@ -36,9 +36,52 @@ The following functions are available in **RNODE**:
 
 The following examples are designed for users with little experience. If you have questions, send a message using GitHub issues. 
 
-### Example 1: Comparison of support values between trees
+### Example 1: Comparison of support values and branch lengths between trees
 
-### Example 2: Comparison 
+Using simple simulations, we can demonstrate how to compare support values between trees. We first simulate two trees containing support values: 
+
+```
+# Simulate two trees
+set.seed(44)
+a = pbtree(n=7) # initial tree a
+node_labels = sample(1:100, a$Nnode, replace = TRUE) # generate random node labels as integers to tree a
+a$node.label = node_labels # add the node labels to tree a
+set.seed(88)
+b = pbtree(n=7) # initial tree b
+node_labels = sample(1:100, b$Nnode, replace = TRUE) # generate random node labels as integers to tree a
+b$node.label = node_labels # Set the node labels to tree b
+```
+
+Next, we run *sharedNodes* to identify matching clades and their descendants and support values. Additionally, we also can plot the trees.
+
+```
+# Compare shared clades and support values
+df = sharedNodes(tree1=a, tree2=b, composition=T, 
+                 plotTrees = T,
+                 output.tree1="example1_simulated1.pdf",
+                 output.tree2="example1_simulated2.pdf", 
+                 tree.width = 3, # adjust tree width
+                 tree.height = 4, # adjust tree height
+                 tree.fsize = 1, # adjust font size
+                 tree.adj=c(1.2,3), # adjust support position
+                 tree.cex=.5, # adjust support size
+                 node.numbers=T) # show node index
+```
+
+<p align="center">
+  <a href="tutorial/example1_simulated1.pdf"><img src="tutorial/example1_simulated1.pdf" alt="Fig 1" width="45%"></a>
+  <a href="tutorial/example1_simulated2.pdf"><img src="tutorial/example1_simulated2.pdf" alt="Fig 2" width="45%"></a>
+</p>
+
+
+
+### Example 2: Comparison of topologies
+
+### Example 3: Comparison of DNA sequences
+
+### Example 4: Matrix manipulation
+
+### Example 5: Mapping support values from non-optimal trees to optimal trees
 
 ## Cite
 

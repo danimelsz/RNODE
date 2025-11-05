@@ -14,14 +14,15 @@ knitr::opts_chunk$set(echo = TRUE)
 Tutorial to demonstrate the main functions available in the R package \code{RNODE}. This tutorial is organized in two sections related to preprocessing and post-processing of phylogenetic trees.
 
 ```{r warning=F, message=F}
+# Set the working directory 
+knitr::opts_knit$set(root.dir = "/Users/labanfibios/Desktop/Doutorado/Project/B5_RNODE/RNODE/tutorial/")
+
 # Load the package
 library(ggplot2)
 library(RNODE)
 ```
 
-# 2. Comparisons of trees
-
-## 2.1 *sharedNodes*
+# 2. Example 1: Comparison of support values between trees
 
 Comparisons between phylogenetic trees are usually performed using topological distance metrics (e.g. Robinson-Foulds and SPR distances) but comparisons of support values between corresponding nodes are usually neglected. We propose the function **sharedNodes** to create a dataframe with node labels, descendants, and support values of shared clades between two phylogenetic trees, which facilitates descriptive and statistical comparisons of support values between corresponding nodes. Two examples are provided below.
 
@@ -39,18 +40,28 @@ node_labels = sample(1:100, b$Nnode, replace = TRUE) # Generate random node labe
 b$node.label = node_labels # Set the node labels to tree b
 
 # Visualize trees
-layout(c(1,2))
-plotTree(ladderize(a, right = T),node.numbers=T, color="blue")
-nodelabels(a$node.label,
-           adj=c(1.9, 1.7), # horizontal and vertical position
-           frame="none")
-plotTree(ladderize(b, right = T),node.numbers=T, color="red")
-nodelabels(b$node.label,
-           adj=c(2, 1.7), # horizontal and vertical position
-           frame="none")
+#layout(c(1,2))
+#plotTree(ladderize(a, right = T),node.numbers=T, color="blue")
+#nodelabels(a$node.label,
+#           adj=c(1.9, 1.7), # horizontal and vertical position
+#           frame="none")
+#plotTree(ladderize(b, right = T),node.numbers=T, color="red")
+#nodelabels(b$node.label,
+#           adj=c(2, 1.7), # horizontal and vertical position
+#           frame="none")
 
-# Run compareNodes
-sharedNodes(tree1=a, tree2=b, composition=T)
+# Run 
+df = sharedNodes(tree1=a, tree2=b, composition=T, 
+                 plotTrees = T,
+                 output.tree1="example1_simulated1.pdf",
+                 output.tree2="example1_simulated2.pdf", 
+                 tree.width = 3, # adjust tree width
+                 tree.height = 4, # adjust tree height
+                 tree.fsize = 1, # adjust font size
+                 tree.adj=c(1.2,3), # adjust support position
+                 tree.cex=.5, # adjust support size
+                 node.numbers=T) # show node index
+View(df)
 ```
 
 Second, we can use **compareNodes** to compare two empirical trees in .nwk format estimated in TNT (datasets from Ruane et al. 2015). One tree was estimated with Sanger-based data, whereas the other one was estimated with AHE data. Polytomous nodes and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees.
