@@ -62,7 +62,7 @@ df = sharedNodes(tree1=a, tree2=b, composition=T,
                  tree.fsize = 1, # adjust font size
                  tree.adj=c(1.2,3), # adjust support position
                  tree.cex=.5, # adjust support size
-                 node.numbers=T) # show node index
+                 node.numbers=F) # show node index
 ```
 
 In contrast to **compareNodes**, the list of descendants and support values of unique clades from each tree can be assessed using **uniqueNodes**.
@@ -70,63 +70,37 @@ In contrast to **compareNodes**, the list of descendants and support values of u
 ```{r}
 uniqueNodes(a, b, composition=T, dataframe=T,
             plotTrees=T, output.tree = "example1.1_unique.pdf",
-            node.numbers=T, 
+            node.numbers=F, # show node index
             tree.fsize=2, # adjust text size
-            tree.cex=7.5, # adjust circle size
+            tree.cex=3.5, # adjust circle size
             sup.adj1=c(-.2,4), # adjust support from tree a
             sup.adj2=c(1.3,4) # adjust support from tree b
             )
 ```
 
+## 2.2 Empirical data
 
+We can use **sharedNodes** to compare two empirical trees in .nwk format estimated in TNT. One tree was estimated with Sanger-based data, whereas the other one was estimated with AHE data. Polytomies and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees.
 
-
-Second, we can use **compareNodes** to compare two empirical trees in .nwk format estimated in TNT (datasets from Ruane et al. 2015). One tree was estimated with Sanger-based data, whereas the other one was estimated with AHE data. Polytomous nodes and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees.
-
-```{r}
-# Load trees
-Sanger = read.tree("../testdata/Ruane2015_Sanger.tre")
-AHE = read.tree("../testdata/Ruane2015_AHE.tre")
-
-# Visualize trees
-layout(c(1,2))
-plotTree(ladderize(Sanger, right = T),node.numbers=T, color="blue", fsize= 0.6)
-nodelabels(Sanger$node.label,
-           adj=c(1.9, 1.2), # horizontal and vertical position
-           frame="none",
-           cex=0.6)
-plotTree(ladderize(AHE, right = T),node.numbers=T, color="red", fsize=0.6)
-nodelabels(AHE$node.label,
-           adj=c(1.9, 1.2), # horizontal and vertical position
-           frame="none",
-           cex=0.6)
-
-# Run compareNodes
-compareNodes(tree1=Sanger, tree2=AHE, composition=F)
-
-# Alternatively, trees can be saved in PDF:
-# compareNodes(tree1=Sanger, tree2=AHE, composition=F, plotTrees=T, width=8, height=8, fsize=0.6, adj=c(1.9,1.2), cex=0.6)
-```
-
-Third, besides Sanger vs AHE phylogenetic trees, **compareNodes** may be useful to compare trees across optimality criteria (e.g. parsimony vs maximum likelihood), character sampling (e.g. only-molecular vs molecular+phenomic analyses), and taxon sampling (e.g. only-extant vs extant and extinct taxa). For instance, we can plot the relationship between molecular and total evidence trees analyzed in IQ-TREE by Whitcher et al. (2024).
+For instance, we can plot the relationship between molecular and total evidence trees analyzed in IQ-TREE by Whitcher et al. (2024).
 
 ```{r}
 # Load trees
 MOL = read.tree("../testdata/Whitcher2024_ML_MOL.contree")
 TE = read.tree("../testdata/Whitcher2024_ML_TE.contree")
 
-# Run compareNodes
-df = compareNodes(tree1=MOL, tree2=TE)
+# Run sharedNodes
+df = sharedNodes(tree1=MOL, 
+                 tree2=TE)
 
 # Plot the relationship of support between trees
-df = df[-1,]
-df$pc = predict(prcomp(~as.numeric(Support_Tree_1)+as.numeric(Support_Tree_2), df))[,1]
-ggplot(df, aes(as.numeric(Support_Tree_1), as.numeric(Support_Tree_2), color=pc)) +
+ggplot(df, aes(as.numeric(Support_Tree_1), as.numeric(Support_Tree_2))) +
   geom_point(size = 5, show.legend = F, alpha=.5) +
-  scale_color_gradient(low = "#0091ff", high = "#f0650e")+
   theme_minimal() + 
   labs(x="\nSupport of Tree 1",
        y="Support of Tree 2\n")
+
+View(df)
 ```
 
 As expected, there is a denser concentration of shared clades with higher values of support, whereas only a few poorly supported clades are shared by both trees.
@@ -138,9 +112,6 @@ As expected, there is a denser concentration of shared clades with higher values
 
 
 
-## 2.3 pairwiseTopologies: Creates a pairwise matrix of topological distances; plot using heat map
-
-## 2.4 consensusLabels: Insert branch lengths from a random MPT and support values in the strict consensus trees
 
 # 3. Comparison of DNA sequences
 
