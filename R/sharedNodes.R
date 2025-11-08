@@ -208,7 +208,7 @@ sharedNodes = function (tree1,tree2,
   sup1 = as.numeric(df$Support_Tree_1[df$Support_Tree_1 != ""]) # delete empty value of the root
   meanSupport2 = mean(na.omit(as.numeric(tree2_pruned$node.label)))
   sup2 = as.numeric(df$Support_Tree_2[df$Support_Tree_2 != ""]) # delete empty value of the root
-  if (spearman) {spearman = cor.test (sup1, sup2, method="spearman")}
+  if (spearman) {spearman_result = cor.test (sup1, sup2, method="spearman")}
 
   # Print
   if (messages) {
@@ -219,7 +219,7 @@ sharedNodes = function (tree1,tree2,
   print (paste("Support of shared clades in tree 1: ", min(sup1), "–", max(sup1), " (", round(mean(sup1),2), ")", sep=""))
   print (paste("Tree 2: Total number of clades =", nClades2, "; Mean support =", meanSupport2))
   print (paste("Support of shared clades in tree 2: ", min(sup2), "–", max(sup2), " (", round(mean(sup2),2), ")", sep=""))
-  if (spearman) {print (paste("Spearman's test: RHO = ", spearman$estimate, "; P-value = ", spearman$p.value))}
+  if (spearman) {print (paste("Spearman's test: RHO = ", spearman_result$estimate, "; P-value = ", spearman_result$p.value))}
   }
 
   # Output

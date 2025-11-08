@@ -65,7 +65,7 @@ df = sharedNodes(tree1=a, tree2=b, composition=T,
                  node.numbers=F) # show node index
 ```
 
-In contrast to **compareNodes**, the list of descendants and support values of unique clades from each tree can be assessed using **uniqueNodes**.
+In contrast to **sharedNodes**, the list of descendants and support values of unique clades from each tree can be assessed using **uniqueNodes**.
 
 ```{r}
 uniqueNodes(a, b, composition=T, dataframe=T,
@@ -78,38 +78,36 @@ uniqueNodes(a, b, composition=T, dataframe=T,
             )
 ```
 
-## 2.2 Empirical data
+## 2.2 Empirical data: Support comparisons
 
-We can use **sharedNodes** to compare two empirical trees in .nwk format estimated in TNT. One tree was estimated with Sanger-based data, whereas the other one was estimated with AHE data. Polytomies and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees.
+We can use **sharedNodes** to compare two empirical trees in .nwk format estimated in TNT. Polytomies and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees.
 
-For instance, we can plot the relationship between molecular and total evidence trees analyzed in IQ-TREE by Whitcher et al. (2024).
+For instance, using the data set from Geisler et al. (2011), we can plot the relationship of bootstrap values between molecular (MOL) and total evidence (TE) trees analyzed in TNT.
 
 ```{r}
 # Load trees
-MOL = read.tree("../testdata/Whitcher2024_ML_MOL.contree")
-TE = read.tree("../testdata/Whitcher2024_ML_TE.contree")
+MOL = read.tree("../testdata/051b_MOL_BS_TNT.nwk")
+TE = read.tree("../testdata/051d_TE_BS_TNT.nwk")
 
 # Run sharedNodes
-df = sharedNodes(tree1=MOL, 
-                 tree2=TE)
+df = sharedNodes(tree1=MOL, tree2=TE, spearman = T)
 
 # Plot the relationship of support between trees
 ggplot(df, aes(as.numeric(Support_Tree_1), as.numeric(Support_Tree_2))) +
   geom_point(size = 5, show.legend = F, alpha=.5) +
   theme_minimal() + 
-  labs(x="\nSupport of Tree 1",
-       y="Support of Tree 2\n")
-
-View(df)
+  geom_smooth(method = "lm", se = T, color = "red", linewidth = .5) +
+  labs(x="\n Bootstrap in the MOL tree",
+       y="Bootstrap in the TE tree \n")
 ```
 
-As expected, there is a denser concentration of shared clades with higher values of support, whereas only a few poorly supported clades are shared by both trees.
+As expected, there is a significant correlation between bootstrap values of MOL and TE trees (Spearman: rho = 0.89; P < 0.001). 
+
+## 2.3 Empirical data: Branch length comparisons
 
 
 
-
-
-
+## 2.4 Empirical data: Topological distances
 
 
 

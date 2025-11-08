@@ -36,7 +36,7 @@ The following functions are available in **RNODE**:
 
 The following examples are designed for users with little experience. If you have questions, send a message using GitHub issues. 
 
-### Example 1: Comparison of support values and branch lengths between trees
+### Example 1: Tree comparisons
 
 #### Example 1.1 Simulated example
 
@@ -103,17 +103,42 @@ uniqueNodes(a, b, composition=T, dataframe=T,
   <a href="tutorial/example1.1_unique.png"><img src="tutorial/example1.1_unique.png" alt="df" width="100%"></a>
 </p>
 
-#### Example 1.2 Empirical example
+#### Example 1.2 Empirical example: Support comparisons
 
+We can use **sharedNodes** to compare two empirical trees in .nwk format estimated in TNT. Polytomies and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees. For instance, using the data set from Geisler et al. (2011), we can plot the relationship of bootstrap values between molecular (MOL) and total evidence (TE) trees analyzed in TNT.
 
+```
+# Load trees
+MOL = read.tree("../testdata/051b_MOL_BS_TNT.nwk")
+TE = read.tree("../testdata/051d_TE_BS_TNT.nwk")
 
-### Example 2: Topological distances
+# Run sharedNodes
+df = sharedNodes(tree1=MOL, tree2=TE, spearman = T)
 
-### Example 3: Comparison of DNA sequences
+# Plot the relationship of support between trees
+ggplot(df, aes(as.numeric(Support_Tree_1), as.numeric(Support_Tree_2))) +
+  geom_point(size = 5, show.legend = F, alpha=.5) +
+  theme_minimal() + 
+  geom_smooth(method = "lm", se = T, color = "red", linewidth = .5) +
+  labs(x="\n Bootstrap in the MOL tree",
+       y="Bootstrap in the TE tree \n")
+```
 
-### Example 4: Matrix manipulation
+<p align="center">
+  <a href="tutorial/example1.2_correlation.png"><img src="tutorial/example1.2_correlation.png" alt="df" width="100%"></a>
+</p>
 
-### Example 5: Mapping support values from non-optimal trees to optimal trees
+As expected, there is a significant correlation between bootstrap values of MOL and TE trees (Spearman: rho = 0.89; P < 0.001). 
+
+#### Example 1.3 Empirical example: Branch length comparisons
+
+#### Example 1.4: Topological distances
+
+### Example 2: Comparison of DNA sequences
+
+### Example 3: Matrix manipulation
+
+### Example 4: Mapping support values from non-optimal trees to optimal trees
 
 ## Cite
 
