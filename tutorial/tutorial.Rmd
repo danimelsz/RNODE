@@ -82,7 +82,7 @@ uniqueNodes(a, b, composition=T, dataframe=T,
 
 We can use **sharedNodes** to compare two empirical trees in .nwk format estimated in TNT. Polytomies and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees.
 
-For instance, using the data set from Geisler et al. (2011), we can plot the relationship of bootstrap values between molecular (MOL) and total evidence (TE) trees analyzed in TNT.
+For instance, using the data set from Whitcher et al. (2025), we can plot the relationship of bootstrap values between molecular (MOL) and total evidence (TE) trees analyzed in TNT.
 
 ```{r}
 # Load trees
@@ -103,19 +103,36 @@ ggplot(df, aes(as.numeric(Support_Tree_1), as.numeric(Support_Tree_2))) +
 
 As expected, there is a significant correlation between bootstrap values of MOL and TE trees (Spearman: rho = 0.89; P < 0.001). 
 
+If the user wants to test if support values of one tree predict the occurrence of clades in another tree, the function **retrodictNodes** creates a dataframe containing support values of tree 1 and the occurrence of the clade in tree 2, which can be used for logistic regressions.
+
+```{r}
+# Load trees
+MOL = read.tree("../testdata/001_MOL_IQTREE.contree")
+TE = read.tree("../testdata/001_TE_ASC_IQTREE.contree")
+
+# Run retrodictNodes
+df = retrodictNodes(MOL, TE)
+df$occurrence_tree2 = as.factor(df$occurrence_tree2)
+
+# Fit the logistic regression
+model <- glm(occurrence_tree2 ~ support_tree1, data = df, family = binomial)
+summary(model)
+
+# Convert log-odds to odd ratios
+exp(coef(model))
+```
+
+Using the data set from Janssens et al. (2018), the logistic regression revealed an intercept of 0.009 (i.e. when bootstrap is 0 in the first tree, the odds of presence of the clade in the second tree is 0.009; P < 0.01). Furthermore, for every one-unit increase in bootstrap in the first tree, the odds of presence of the clade in the second tree increase by 1.075 (7.5%). 
+
 ## 2.3 Empirical data: Branch length comparisons
 
-
-
 ## 2.4 Empirical data: Topological distances
-
-
 
 # 3. Comparison of DNA sequences
 
 # 4. Manipulation of matrices
 
-## 4.2 splitOrdFromUnord: Split a Nexus morphological matrix into partitions of ordered and unordered characters
+*splitOrdFromUnord* splits a Nexus morphological matrix into partitions of ordered and unordered characters
 
 ```{r}
 # Data input of list of ordered characters
@@ -128,8 +145,106 @@ RNODE::splitOrdFromUnord(input="048_MORPH_data.nex", output_index = "048_MORPH",
 
 # 5. Manipulation of trees
 
+Given a tree A without support values (e.g. strict consensus of optimal trees) and a tree B with support values (e.g. majority consensus from bootstrap pseudo-replicates), *mapSupport()* returns the tree A with support values from shared clades with tree B. 
+
+```{r}
+# Read trees
+opt = read.tree("../testdata/051a_strictConsensus_MOL_TNT_results.nwk")
+BS = read.tree("../testdata/051b_MOL_BS_TNT.nwk")
+
+# Compute topological distances
+summaryTopologicalDist(opt, BS)
+
+# Map the BS values from the majority consensus tree to the optimal tree
+opt_with_bs = mapSupport(opt, BS)
+opt_with_bs[1]
+
+# Plot the optimal tree with BS and the majority consensus tree with BS
+uniqueNodes(opt_with_bs[[1]], BS, 
+            plotTrees=T, output.tree = "example5.pdf",
+            node.numbers=F, 
+            tree.fsize=.25, # adjust text size
+            tree.cex=1.5, # adjust circle size
+            sup.adj1=c(-.2,4), # adjust support from tree a
+            sup.adj2=c(1.3,4), # adjust support from tree b
+            sup.cex=.25)
+```
+
+Another option is mapping branch lengths:
+
+```{r}
+# Load trees
+MOL = read.tree("../testdata/Whitcher2024_ML_MOL.contree")
+TE = read.tree("../testdata/Whitcher2024_ML_TE.contree")
+
+# simulate two random trees with 5 tips (rtree generates branch lengths by default)
+set.seed(42)   
+tree1 <- rtree(5)
+tree2 <- rtree(6)
+
+# show branch lengths
+tree1$edge.length
+tree2$edge.length
+
+# Prune terminals not shared by both trees
+shared_terminals <- intersect(tree1$tip.label, tree2$tip.label)
+tree1_pruned <- drop.tip(tree1, tree1$tip.label[!(tree1$tip.label %in% shared_terminals)])
+tree2_pruned <- drop.tip(tree2, tree2$tip.label[!(tree2$tip.label %in% shared_terminals)])
+
+# Ladderize trees
+tree1_pruned = ladderize(tree1_pruned, right = TRUE) # Sort nodes in the tree according to clade size
+tree2_pruned = ladderize(tree2_pruned, right = TRUE) # Sort nodes in the tree according to clade size
+
+# plot side-by-side
+par(mfrow = c(1,2), mar = c(4,4,2,1))  # 1 row, 2 cols
+plot(tree1_pruned, main = "Tree 1", cex = 1, edge.width = 2)
+edgelabels(round(tree1_pruned$edge.length, 3), cex = 0.8)  # show branch lengths
+
+plot(tree2_pruned, main = "Tree 2", cex = 1, edge.width = 2)
+edgelabels(round(tree2_pruned$edge.length, 3), cex = 0.8)
+
+# Function to extract clades, node indices, edge length, and edge type
+compareBranchLength <- function(tree) {
+  n_tips <- length(tree$tip.label)
+  clades <- vector("list", nrow(tree$edge))
+  edge_type <- character(nrow(tree$edge))
+  
+  for (i in seq_len(nrow(tree$edge))) {
+    desc_node <- tree$edge[i, 2]
+    if (desc_node <= n_tips) {
+      # Descendant is a tip -> terminal edge
+      edge_type[i] <- "terminal"
+      desc <- desc_node
+    } else {
+      # Internal edge -> clade of descendant tips
+      edge_type[i] <- "internal"
+      desc <- Descendants(tree, desc_node, "tips")[[1]]
+    }
+    clades[[i]] <- sort(tree$tip.label[desc])
+  }
+  
+  data.frame(
+    ParentNode = tree$edge[, 1],
+    ChildNode = tree$edge[, 2],
+    EdgeType = edge_type,
+    Clade = sapply(clades, paste, collapse = ","),
+    EdgeLength = tree$edge.length,
+    stringsAsFactors = FALSE
+  )
+}
+
+
+# Extract clade info for both trees
+df1 <- get_clades(tree1_pruned)
+df2 <- get_clades(tree2_pruned)
+
+# Merge by matching clade composition
+df_merged <- merge(df1, df2, by = "Clade", all = TRUE, suffixes = c("_tree1", "_tree2"))
+
+# View merged clade-edge-length table
+df_merged
+```
+
 # 6. References
 
-Ruane, S., Raxworthy, C. J., Lemmon, A. R., Lemmon, E. M., & Burbrink, F. T. (2015). Comparing species tree estimation with large anchored phylogenomic and small Sanger-sequenced molecular datasets: an empirical study on Malagasy pseudoxyrhophiine snakes. BMC Evolutionary Biology, 15, 1-14.
 
-Whitcher (ADICIONAR)

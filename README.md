@@ -105,7 +105,7 @@ uniqueNodes(a, b, composition=T, dataframe=T,
 
 #### Example 1.2 Empirical example: Support comparisons
 
-We can use **sharedNodes** to compare two empirical trees in .nwk format estimated in TNT. Polytomies and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees. For instance, using the data set from Geisler et al. (2011), we can plot the relationship of bootstrap values between molecular (MOL) and total evidence (TE) trees analyzed in TNT.
+We can use *sharedNodes* to compare two empirical trees in .nwk format estimated in TNT. Polytomies and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees. For instance, using the data set from Whitcher et al. (2025), we can plot the relationship of bootstrap values between molecular (MOL) and total evidence (TE) trees analyzed in TNT.
 
 ```
 # Load trees
@@ -130,15 +130,42 @@ ggplot(df, aes(as.numeric(Support_Tree_1), as.numeric(Support_Tree_2))) +
 
 As expected, there is a significant correlation between bootstrap values of MOL and TE trees (Spearman: rho = 0.89; P < 0.001). 
 
-#### Example 1.3 Empirical example: Branch length comparisons
+#### Example 1.3 Empirical example: Logistic regressions
 
-#### Example 1.4: Topological distances
+If the user wants to test if support values of one tree predict the occurrence of clades in another tree, the function **retrodictNodes** creates a dataframe containing support values of tree 1 and the occurrence of the clade in tree 2, which can be used for logistic regressions.
 
-### Example 2: Comparison of DNA sequences
+```
+# Load trees
+MOL = read.tree("../testdata/001_MOL_IQTREE.contree")
+TE = read.tree("../testdata/001_TE_ASC_IQTREE.contree")
 
-### Example 3: Matrix manipulation
+# Run retrodictNodes
+df = retrodictNodes(MOL, TE)
+df$occurrence_tree2 = as.factor(df$occurrence_tree2)
 
-### Example 4: Mapping support values from non-optimal trees to optimal trees
+# Fit the logistic regression
+model <- glm(occurrence_tree2 ~ support_tree1, data = df, family = binomial)
+summary(model)
+
+# Convert log-odds to odd ratios
+exp(coef(model))
+```
+
+Using the data set from Janssens et al. (2018), the logistic regression revealed an intercept of 0.009 (i.e. when bootstrap is 0 in the first tree, the odds of presence of the clade in the second tree is 0.009; P < 0.01). Furthermore, for every one-unit increase in bootstrap in the first tree, the odds of presence of the clade in the second tree increase by 1.075 (7.5%). 
+
+#### Example 1.4 Empirical example: Branch length comparisons
+
+
+
+#### Example 1.5 Topological distances
+
+### Example 2 Comparison of DNA sequences
+
+### Example 3 Matrix manipulation
+
+### Example 4 Tree manipulation
+
+
 
 ## Cite
 
