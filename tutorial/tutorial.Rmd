@@ -161,6 +161,24 @@ ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
        y="Branch lengths in the TE tree \n")
 ```
 
+```{r}
+MOL = read.tree("../testdata/001_MOL_IQTREE.contree")
+TE = read.tree("../testdata/001_TE_ASC_IQTREE.contree")
+
+# Compare branch lengths
+df = RNODE::compareBranchLength(MOL, TE, composition=F)
+
+# Correlation between branch lengths
+summary(lm(data=df, formula=EdgeLength_tree1 ~ EdgeLength_tree2))
+
+# Plot 
+ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
+  geom_point(size = 5, show.legend = F, alpha=.5) +
+  theme_minimal() + 
+  geom_smooth(method = "lm", se = T, color = "red", linewidth = .5) +
+  labs(x="\n Branch lengths in the MOL tree",
+       y="Branch lengths in the TE tree \n")
+```
 
 ## 2.4 Topological distances
 

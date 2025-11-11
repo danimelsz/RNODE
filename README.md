@@ -156,15 +156,11 @@ Using the data set from Janssens et al. (2018), the logistic regression revealed
 
 #### Example 1.4 Branch length comparisons
 
-In addition to descendants and support values, branch lengths can be compared. Here we used two simple simulated examples.
+In addition to descendants and support values, branch lengths can be compared. 
 
 ```
-# Read trees
-mol = read.tree("../testdata/003_MOL_IQTREE.contree")
-te = read.tree("../testdata/003_TE_ASC_IQTREE.contree")
-
 # Compare branch lengths
-RNODE::compareBranchLength(tree1, tree2, composition=T)
+RNODE::compareBranchLength(MOL, TE, composition=T)
 
 # Correlation between branch lengths
 summary(lm(data=df, formula=EdgeLength_tree1 ~ EdgeLength_tree2))
@@ -179,7 +175,7 @@ ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
 ```
 
 <p align="center">
-  <a href="tutorial/example1.4.png"><img src="tutorial/example1.4.png" alt="df" width="100%"></a>
+  <a href="tutorial/example4_lengths.png"><img src="tutorial/example4_lengths.png" alt="df" width="100%"></a>
 </p>
 
 #### Example 1.5 Topological distances
