@@ -8,6 +8,8 @@
 #' @param write Optional. Specify the name of the dataframe file to be written locally (nothing is written if this parameter is not specified)
 #' @param outgroup Optional. Specify outgroup taxa to remove (by default, outgroup = F assumes that the user does not want to remove outgroup taxa)
 #' @param root Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, root = F assumes that trees share the same root)
+#' @param composition. Optional. Specify if composition of corresponding clades should be present in the dataframe (by default, composition = F) 
+#' @param unique. Optional. Show unique clades (default: unique = F).
 #' @examples
 #' # Example 1 (identify unique nodes)
 #' tree1 = read.tree (text="(t1,(t3,(t2,(t4,t5))));")
@@ -15,10 +17,12 @@
 #' compareBranchLength (tree1, tree2)
 #'
 #' @export
-mapBranchLength = function (tree1,tree2,
+compareBranchLength = function (tree1,tree2,
                             write=NULL,
                             outgroup=NULL,
-                            root=NULL){
+                            root=NULL,
+                            composition=F,
+                            unique=F){
   # Initial warnings
   missing_params <- c()
   if (is.null(tree1)) missing_params <- c(missing_params, "tree1")
@@ -94,6 +98,15 @@ mapBranchLength = function (tree1,tree2,
   
   # Merge by matching clade composition
   df_merged <- merge(df1, df2, by = "Clade", all = TRUE, suffixes = c("_tree1", "_tree2"))
+  # Remove columns when composition == FALSE
+  if (!composition) {
+    cols_to_remove <- c("Clade",
+                        "ParentNode_tree1", "ChildNode_tree1",
+                        "ParentNode_tree2", "ChildNode_tree2")
+    df_merged <- df_merged[, !(names(df_merged) %in% cols_to_remove), drop = FALSE]
+  }
+  # Remove unique clades when unique == TRUE
+  if (!unique) { df_merged <- na.omit(df_merged) }
   
   return(df_merged)
   }

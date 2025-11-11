@@ -27,6 +27,7 @@ The following functions are available in **RNODE**:
 | *sharedNodes*             | Given two input trees, compare shared clades. The output is (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.  |
 | *uniqueNodes*             | Given two input trees, identify unique clades. The output is two lists containing unique clades and support values in each tree.  |
 | *retrodictNodes*          | Given two input trees, create a dataframe containing support values of one tree and clade occurrence  of another tree. |
+| *compareBranchLength*             | Given two input trees, compare branch lengths of internal edges (shared clades) and terminal edges (shared leaves). The output is a dataframe with node labels and branch lenghs.  |
 | *normalizedSPR*           | Given two binary trees, compute the normalized SPR distance, following Ding et al. (2011). |
 | *multiSPR*                | Given two sets of binary trees (e.g. MPTs), compute (normalized) SPR distances between two randomly selected trees or between all pairs of trees (summarized as mean or minimum values). |
 | *summaryTopologicalDist*  | Given two sets of trees, compute the number of shared clades, number of unique clades in each tree, Robinson-Foulds, and Cluster Information distance.  |
@@ -38,7 +39,7 @@ The following examples are designed for users with little experience. If you hav
 
 ### Example 1: Tree comparisons
 
-#### Example 1.1 Simulated example
+#### Example 1.1 Identify shared and unique clades
 
 Using simple simulations, we can demonstrate how to compare support values between trees. We first simulate two trees containing support values: 
 
@@ -103,7 +104,7 @@ uniqueNodes(a, b, composition=T, dataframe=T,
   <a href="tutorial/example1.1_unique.png"><img src="tutorial/example1.1_unique.png" alt="df" width="100%"></a>
 </p>
 
-#### Example 1.2 Empirical example: Support comparisons
+#### Example 1.2 Support comparisons
 
 We can use *sharedNodes* to compare two empirical trees in .nwk format estimated in TNT. Polytomies and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees. For instance, using the data set from Whitcher et al. (2025), we can plot the relationship of bootstrap values between molecular (MOL) and total evidence (TE) trees analyzed in TNT.
 
@@ -130,7 +131,7 @@ ggplot(df, aes(as.numeric(Support_Tree_1), as.numeric(Support_Tree_2))) +
 
 As expected, there is a significant correlation between bootstrap values of MOL and TE trees (Spearman: rho = 0.89; P < 0.001). 
 
-#### Example 1.3 Empirical example: Logistic regressions
+#### Example 1.3 Logistic regressions
 
 If the user wants to test if support values of one tree predict the occurrence of clades in another tree, the function **retrodictNodes** creates a dataframe containing support values of tree 1 and the occurrence of the clade in tree 2, which can be used for logistic regressions.
 
@@ -153,9 +154,33 @@ exp(coef(model))
 
 Using the data set from Janssens et al. (2018), the logistic regression revealed an intercept of 0.009 (i.e. when bootstrap is 0 in the first tree, the odds of presence of the clade in the second tree is 0.009; P < 0.01). Furthermore, for every one-unit increase in bootstrap in the first tree, the odds of presence of the clade in the second tree increase by 1.075 (7.5%). 
 
-#### Example 1.4 Empirical example: Branch length comparisons
+#### Example 1.4 Branch length comparisons
 
+In addition to descendants and support values, branch lengths can be compared. Here we used two simple simulated examples.
 
+```
+# Read trees
+mol = read.tree("../testdata/003_MOL_IQTREE.contree")
+te = read.tree("../testdata/003_TE_ASC_IQTREE.contree")
+
+# Compare branch lengths
+RNODE::compareBranchLength(tree1, tree2, composition=T)
+
+# Correlation between branch lengths
+summary(lm(data=df, formula=EdgeLength_tree1 ~ EdgeLength_tree2))
+
+# Plot 
+ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
+  geom_point(size = 5, show.legend = F, alpha=.5) +
+  theme_minimal() + 
+  geom_smooth(method = "lm", se = T, color = "red", linewidth = .5) +
+  labs(x="\n Branch lengths in the MOL tree",
+       y="Branch lengths in the TE tree \n")
+```
+
+<p align="center">
+  <a href="tutorial/example1.4.png"><img src="tutorial/example1.4.png" alt="df" width="100%"></a>
+</p>
 
 #### Example 1.5 Topological distances
 

@@ -24,7 +24,7 @@ library(RNODE)
 
 # 2. Example 1: Comparison of support values between trees
 
-## 2.1 Simulated data
+## 2.1 Identify shared and unique clades
 
 Comparisons between phylogenetic trees are usually performed using topological distance metrics (e.g. Robinson-Foulds and SPR distances) but comparisons of support values between corresponding nodes are usually neglected. We propose the function **sharedNodes** to create a dataframe with node labels, descendants, and support values of shared clades between two phylogenetic trees, which facilitates descriptive and statistical comparisons of support values between corresponding nodes. Two examples are provided below.
 
@@ -78,7 +78,7 @@ uniqueNodes(a, b, composition=T, dataframe=T,
             )
 ```
 
-## 2.2 Empirical data: Support comparisons
+## 2.2 Support comparisons
 
 We can use **sharedNodes** to compare two empirical trees in .nwk format estimated in TNT. Polytomies and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees.
 
@@ -103,6 +103,8 @@ ggplot(df, aes(as.numeric(Support_Tree_1), as.numeric(Support_Tree_2))) +
 
 As expected, there is a significant correlation between bootstrap values of MOL and TE trees (Spearman: rho = 0.89; P < 0.001). 
 
+## 2.3 Logistic regressions
+
 If the user wants to test if support values of one tree predict the occurrence of clades in another tree, the function **retrodictNodes** creates a dataframe containing support values of tree 1 and the occurrence of the clade in tree 2, which can be used for logistic regressions.
 
 ```{r}
@@ -124,9 +126,43 @@ exp(coef(model))
 
 Using the data set from Janssens et al. (2018), the logistic regression revealed an intercept of 0.009 (i.e. when bootstrap is 0 in the first tree, the odds of presence of the clade in the second tree is 0.009; P < 0.01). Furthermore, for every one-unit increase in bootstrap in the first tree, the odds of presence of the clade in the second tree increase by 1.075 (7.5%). 
 
-## 2.3 Empirical data: Branch length comparisons
+## 2.4 Branch length comparisons
 
-## 2.4 Empirical data: Topological distances
+In addition to descendants and support values, branch lengths can be compared. Here we used two simple simulated examples.
+
+```{r}
+# Read trees
+mol = read.tree("../testdata/003_MOL_IQTREE.contree")
+te = read.tree("../testdata/003_TE_ASC_IQTREE.contree")
+
+# plot side-by-side
+par(mfrow = c(1,2), mar = c(4,4,2,1))  # 1 row, 2 cols
+plot(mol, main = "Tree 1", cex = 1, edge.width = 2)
+edgelabels(round(mol$edge.length, 3), cex = 0.5)  # show branch length
+nodelabels(node = 1:mol$Nnode + length(mol$tip.label), 
+            adj = c(1.2, -1), frame = "none", cex = 0.8, col = "red") # show node indices
+plot(te, main = "Tree 2", cex = 1, edge.width = 2)
+edgelabels(round(te$edge.length, 3), cex = 0.5) # show branch length
+nodelabels(node = 1:te$Nnode + length(te$tip.label),
+            adj = c(1.2, -1), frame = "none", cex = 0.8, col = "red") # show node indices
+
+# Compare branch lengths
+df = RNODE::compareBranchLength(mol, te, composition=F)
+
+# Correlation between branch lengths
+summary(lm(data=df, formula=EdgeLength_tree1 ~ EdgeLength_tree2))
+
+# Plot 
+ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
+  geom_point(size = 5, show.legend = F, alpha=.5) +
+  theme_minimal() + 
+  geom_smooth(method = "lm", se = T, color = "red", linewidth = .5) +
+  labs(x="\n Branch lengths in the MOL tree",
+       y="Branch lengths in the TE tree \n")
+```
+
+
+## 2.4 Topological distances
 
 # 3. Comparison of DNA sequences
 
@@ -185,64 +221,6 @@ tree2 <- rtree(6)
 # show branch lengths
 tree1$edge.length
 tree2$edge.length
-
-# Prune terminals not shared by both trees
-shared_terminals <- intersect(tree1$tip.label, tree2$tip.label)
-tree1_pruned <- drop.tip(tree1, tree1$tip.label[!(tree1$tip.label %in% shared_terminals)])
-tree2_pruned <- drop.tip(tree2, tree2$tip.label[!(tree2$tip.label %in% shared_terminals)])
-
-# Ladderize trees
-tree1_pruned = ladderize(tree1_pruned, right = TRUE) # Sort nodes in the tree according to clade size
-tree2_pruned = ladderize(tree2_pruned, right = TRUE) # Sort nodes in the tree according to clade size
-
-# plot side-by-side
-par(mfrow = c(1,2), mar = c(4,4,2,1))  # 1 row, 2 cols
-plot(tree1_pruned, main = "Tree 1", cex = 1, edge.width = 2)
-edgelabels(round(tree1_pruned$edge.length, 3), cex = 0.8)  # show branch lengths
-
-plot(tree2_pruned, main = "Tree 2", cex = 1, edge.width = 2)
-edgelabels(round(tree2_pruned$edge.length, 3), cex = 0.8)
-
-# Function to extract clades, node indices, edge length, and edge type
-compareBranchLength <- function(tree) {
-  n_tips <- length(tree$tip.label)
-  clades <- vector("list", nrow(tree$edge))
-  edge_type <- character(nrow(tree$edge))
-  
-  for (i in seq_len(nrow(tree$edge))) {
-    desc_node <- tree$edge[i, 2]
-    if (desc_node <= n_tips) {
-      # Descendant is a tip -> terminal edge
-      edge_type[i] <- "terminal"
-      desc <- desc_node
-    } else {
-      # Internal edge -> clade of descendant tips
-      edge_type[i] <- "internal"
-      desc <- Descendants(tree, desc_node, "tips")[[1]]
-    }
-    clades[[i]] <- sort(tree$tip.label[desc])
-  }
-  
-  data.frame(
-    ParentNode = tree$edge[, 1],
-    ChildNode = tree$edge[, 2],
-    EdgeType = edge_type,
-    Clade = sapply(clades, paste, collapse = ","),
-    EdgeLength = tree$edge.length,
-    stringsAsFactors = FALSE
-  )
-}
-
-
-# Extract clade info for both trees
-df1 <- get_clades(tree1_pruned)
-df2 <- get_clades(tree2_pruned)
-
-# Merge by matching clade composition
-df_merged <- merge(df1, df2, by = "Clade", all = TRUE, suffixes = c("_tree1", "_tree2"))
-
-# View merged clade-edge-length table
-df_merged
 ```
 
 # 6. References
