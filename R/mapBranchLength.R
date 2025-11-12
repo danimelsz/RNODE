@@ -6,7 +6,6 @@
 #' @param tree1 A phylo object without branch lengths
 #' @param tree2 A phylo object with branch lengths
 #' @param write Optional. Specify the name of tree file to be written locally (nothing is written if this parameter is not specified)
-#' @param outgroup Optional. Specify outgroup taxa to remove (by default, outgroup = F assumes that the user does not want to remove outgroup taxa)
 #' @param root Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, root = F assumes that trees share the same root)
 #' @examples
 #' # Example 1 (identify unique nodes)
@@ -15,45 +14,88 @@
 #' mapBranchLength (tree1, tree2)
 #'
 #' @export
-mapBranchLength = function (tree1,tree2,
-                       write=NULL,
-                       outgroup=NULL,
-                       root=NULL,
-                       plotTrees=F, node.numbers=T, tree.width=10, tree.height=10, tree.fsize=0.5, tree.adj=c(-1.5,0.5), tree.cex=2, tree.output="trees_unique_nodes.pdf"
-){
-  # Initial warnings
-  missing_params <- c()
-  if (is.null(tree1)) missing_params <- c(missing_params, "tree1")
-  if (is.null(tree2)) missing_params <- c(missing_params, "tree2")
-  if (length(missing_params) > 0) {   # Check if there are any missing parameters and print a message
-    message("The following parameters are missing: ", paste(missing_params, collapse = ", "))
-  } else {
-    message("All required parameters provided.") # Proceed with the main functionality if all parameters are provided
+mapBranchLength <- function(tree1, trees2, method = c("random", "minimum")) {
+  # Dependencies
+  if (!requireNamespace("ape", quietly = TRUE))
+    stop("Package 'ape' is required.")
+
+  method <- match.arg(method)
+
+  # Ensure trees2 is a list
+  if (inherits(trees2, "phylo")) trees2 <- list(trees2)
+
+  # Check taxon sets
+  tips1 <- tree1$tip.label
+  for (tr in trees2) {
+    if (!setequal(tr$tip.label, tips1))
+      stop("All trees must have the same tip set as tree1.")
   }
-  
-  #################
-  # PREPROCESSING #
-  #################
-  
-  # If specified, prune outgroup terminals
-  if (!is.null(outgroup)) {
-    tree1 <- drop.tip(tree1, outgroup)
-    tree2 <- drop.tip(tree2, outgroup)
+
+  # Helper to get all clades from a tree
+  get_clades <- function(tree) {
+    n_tips <- length(tree$tip.label)
+    lapply((n_tips + 1):(n_tips + tree$Nnode), function(node)
+      sort(ape::extract.clade(tree, node)$tip.label))
   }
-  
-  # Prune terminals not shared by both trees
-  shared_terminals <- intersect(tree1$tip.label, tree2$tip.label)
-  tree1_pruned <- drop.tip(tree1, tree1$tip.label[!(tree1$tip.label %in% shared_terminals)])
-  tree2_pruned <- drop.tip(tree2, tree2$tip.label[!(tree2$tip.label %in% shared_terminals)])
-  
-  # If specified, reroot both trees using the same terminal
-  if (!is.null(root)) {
-    tree1_pruned <- root(tree1_pruned, outgroup = root)
-    tree2_pruned <- root(tree2_pruned, outgroup = root)
+
+  # Store all clades
+  clades1 <- get_clades(tree1)
+  clades2_list <- lapply(trees2, get_clades)
+
+  # Prepare result
+  n_edges <- nrow(tree1$edge)
+  mapped_lengths <- numeric(n_edges)
+
+  # --- Step 1: Map terminal (leaf) edges ---
+  for (i in seq_along(tips1)) {
+    tip <- tips1[i]
+    edge_idx <- which(tree1$edge[, 2] == i)
+    lengths <- numeric()
+
+    for (tr in trees2) {
+      idx2 <- which(tr$edge[, 2] == which(tr$tip.label == tip))
+      lengths <- c(lengths, tr$edge.length[idx2])
+    }
+
+    if (length(lengths) == 0) {
+      mapped_lengths[edge_idx] <- 0  # Should not happen normally
+    } else if (method == "random") {
+      mapped_lengths[edge_idx] <- sample(lengths, 1)
+    } else if (method == "minimum") {
+      mapped_lengths[edge_idx] <- min(lengths)
+    }
   }
-  
-  # Ladderize trees
-  tree1_pruned = ladderize(tree1_pruned, right = TRUE) # Sort nodes in the tree according to clade size
-  tree2_pruned = ladderize(tree2_pruned, right = TRUE) # Sort nodes in the tree according to clade size
-  
+
+  # --- Step 2: Map internal edges ---
+  n_tips <- length(tree1$tip.label)
+  for (i in seq_along(clades1)) {
+    clade1 <- clades1[[i]]
+    edge_idx <- which(tree1$edge[, 2] == (n_tips + i))
+    lengths <- numeric()
+
+    # Collect branch lengths from trees2 for shared clades
+    for (j in seq_along(trees2)) {
+      clades2 <- clades2_list[[j]]
+      match_idx <- which(sapply(clades2, function(cl) identical(cl, clade1)))
+      if (length(match_idx) > 0) {
+        edge2 <- which(trees2[[j]]$edge[, 2] == (length(tips1) + match_idx))
+        lengths <- c(lengths, trees2[[j]]$edge.length[edge2])
+      }
+    }
+
+    # Assign branch length or 0 if no match (collapsed edge)
+    if (length(lengths) == 0) {
+      mapped_lengths[edge_idx] <- 0
+    } else if (method == "random") {
+      mapped_lengths[edge_idx] <- sample(lengths, 1)
+    } else if (method == "minimum") {
+      mapped_lengths[edge_idx] <- min(lengths)
+    }
+  }
+
+  # Attach lengths
+  tree1$edge.length <- mapped_lengths
+  return(tree1)
 }
+
+

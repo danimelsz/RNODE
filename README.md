@@ -27,7 +27,7 @@ The following functions are available in **RNODE**:
 | *sharedNodes*             | Given two input trees, compare shared clades. The output is (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.  |
 | *uniqueNodes*             | Given two input trees, identify unique clades. The output is two lists containing unique clades and support values in each tree.  |
 | *retrodictNodes*          | Given two input trees, create a dataframe containing support values of one tree and clade occurrence  of another tree. |
-| *compareBranchLength*             | Given two input trees, compare branch lengths of internal edges (shared clades) and terminal edges (shared leaves). The output is a dataframe with node labels and branch lenghs.  |
+| *compareBranchLength*             | Given two input trees, compare branch lengths of internal edges (shared clades) and terminal edges (shared leaves). The output is a dataframe with node labels and branch lengths.  |
 | *normalizedSPR*           | Given two binary trees, compute the normalized SPR distance, following Ding et al. (2011). |
 | *multiSPR*                | Given two sets of binary trees (e.g. MPTs), compute (normalized) SPR distances between two randomly selected trees or between all pairs of trees (summarized as mean or minimum values). |
 | *summaryTopologicalDist*  | Given two sets of trees, compute the number of shared clades, number of unique clades in each tree, Robinson-Foulds, and Cluster Information distance.  |
@@ -178,7 +178,25 @@ ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
   <a href="tutorial/example4_lengths.png"><img src="tutorial/example4_lengths.png" alt="df" width="100%"></a>
 </p>
 
+As expected, there is a significant correlation between bootstrap values of MOL and TE trees (lsinear model: estimate = 0.78; R-squared = 0.86; P < 0.001).
+
 #### Example 1.5 Topological distances
+
+In addition to comparisons between shared clades, support values and branch lengths, a popular method to compare phylogenies is based on topological metrics. Popular metrics like Robinson-Foulds and Cluster Information distances can be summarized using **summaryTopologicalDist**. Moreover, a common topological metric is the number of SPR moves to edit one tree into another tree. However, implementations are lacking in R to normalize SPR distances using the refined upper bound from Ding et al. (2011) (**normalizedSPR**) and computing SPR distances for polytomous trees (**multiSPR**). 
+
+```
+# Read trees
+mol = read.tree("../testdata/003_MOL_IQTREE.contree")
+te = read.tree("../testdata/003_TE_ASC_IQTREE.contree")
+
+# RF and CID
+summaryTopologicalDist(mol, te)
+
+# Normalized SPR
+normalizedSPR(mol, te)
+```
+
+The normalized SPR is 0.1931574.
 
 ### Example 2 Comparison of DNA sequences
 
@@ -186,7 +204,26 @@ ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
 
 ### Example 4 Tree manipulation
 
+Given a tree A without support values (e.g. strict consensus of optimal trees) and a tree B with support values (e.g. majority consensus from bootstrap pseudo-replicates), *mapSupport()* returns the tree A with support values from shared clades with tree B. For instance, the strict consensus of optimal trees and the majority consensus tree from bootstrap trees share 223 clades, presenting 6 unique clades in the strict consensus and 1 unique clade in the bootstrap tree.  
 
+```
+# Read trees
+opt = read.tree("../testdata/051a_strictConsensus_MOL_TNT_results.nwk")
+BS = read.tree("../testdata/051b_MOL_BS_TNT.nwk")
+
+# Compute topological distances
+summaryTopologicalDist(opt, BS)
+
+# Map the BS values from the majority consensus tree to the optimal tree
+opt_with_bs = mapSupport(opt, BS)
+opt_with_bs[1]
+```
+
+Another option is mapping branch lengths from a pool of trees to a strict consensus:
+
+```
+
+```
 
 ## Cite
 

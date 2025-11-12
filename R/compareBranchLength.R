@@ -8,8 +8,8 @@
 #' @param write Optional. Specify the name of the dataframe file to be written locally (nothing is written if this parameter is not specified)
 #' @param outgroup Optional. Specify outgroup taxa to remove (by default, outgroup = F assumes that the user does not want to remove outgroup taxa)
 #' @param root Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, root = F assumes that trees share the same root)
-#' @param composition. Optional. Specify if composition of corresponding clades should be present in the dataframe (by default, composition = F) 
-#' @param unique. Optional. Show unique clades (default: unique = F).
+#' @param composition Optional. Specify if composition of corresponding clades should be present in the dataframe (by default, composition = F)
+#' @param unique Optional. Show unique clades (default: unique = F)
 #' @examples
 #' # Example 1 (identify unique nodes)
 #' tree1 = read.tree (text="(t1,(t3,(t2,(t4,t5))));")
@@ -32,41 +32,41 @@ compareBranchLength = function (tree1,tree2,
   } else {
     message("All required parameters provided.") # Proceed with the main functionality if all parameters are provided
   }
-  
+
   #################
   # PREPROCESSING #
   #################
-  
+
   # If specified, prune outgroup terminals
   if (!is.null(outgroup)) {
     tree1 <- drop.tip(tree1, outgroup)
     tree2 <- drop.tip(tree2, outgroup)
   }
-  
+
   # Prune terminals not shared by both trees
   shared_terminals <- intersect(tree1$tip.label, tree2$tip.label)
   tree1_pruned <- drop.tip(tree1, tree1$tip.label[!(tree1$tip.label %in% shared_terminals)])
   tree2_pruned <- drop.tip(tree2, tree2$tip.label[!(tree2$tip.label %in% shared_terminals)])
-  
+
   # If specified, reroot both trees using the same terminal
   if (!is.null(root)) {
     tree1_pruned <- root(tree1_pruned, outgroup = root)
     tree2_pruned <- root(tree2_pruned, outgroup = root)
   }
-  
+
   # Ladderize trees
   tree1_pruned = ladderize(tree1_pruned, right = TRUE) # Sort nodes in the tree according to clade size
   tree2_pruned = ladderize(tree2_pruned, right = TRUE) # Sort nodes in the tree according to clade size
-  
+
   #############
   # DATAFRAME #
   #############
-  
+
   get_clades <- function(tree) {
     n_tips <- length(tree$tip.label)
     clades <- vector("list", nrow(tree$edge))
     edge_type <- character(nrow(tree$edge))
-    
+
     for (i in seq_len(nrow(tree$edge))) {
       desc_node <- tree$edge[i, 2]
       if (desc_node <= n_tips) {
@@ -80,7 +80,7 @@ compareBranchLength = function (tree1,tree2,
       }
       clades[[i]] <- sort(tree$tip.label[desc])
     }
-    
+
     data.frame(
       ParentNode = tree$edge[, 1],
       ChildNode = tree$edge[, 2],
@@ -90,12 +90,12 @@ compareBranchLength = function (tree1,tree2,
       stringsAsFactors = FALSE
     )
   }
-  
-  
+
+
   # Extract clade info for both trees
   df1 <- get_clades(tree1_pruned)
   df2 <- get_clades(tree2_pruned)
-  
+
   # Merge by matching clade composition
   df_merged <- merge(df1, df2, by = "Clade", all = TRUE, suffixes = c("_tree1", "_tree2"))
   # Remove columns when composition == FALSE
@@ -107,6 +107,6 @@ compareBranchLength = function (tree1,tree2,
   }
   # Remove unique clades when unique == TRUE
   if (!unique) { df_merged <- na.omit(df_merged) }
-  
+
   return(df_merged)
   }

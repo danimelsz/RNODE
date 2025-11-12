@@ -161,26 +161,21 @@ ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
        y="Branch lengths in the TE tree \n")
 ```
 
-```{r}
-MOL = read.tree("../testdata/001_MOL_IQTREE.contree")
-TE = read.tree("../testdata/001_TE_ASC_IQTREE.contree")
-
-# Compare branch lengths
-df = RNODE::compareBranchLength(MOL, TE, composition=F)
-
-# Correlation between branch lengths
-summary(lm(data=df, formula=EdgeLength_tree1 ~ EdgeLength_tree2))
-
-# Plot 
-ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
-  geom_point(size = 5, show.legend = F, alpha=.5) +
-  theme_minimal() + 
-  geom_smooth(method = "lm", se = T, color = "red", linewidth = .5) +
-  labs(x="\n Branch lengths in the MOL tree",
-       y="Branch lengths in the TE tree \n")
-```
-
 ## 2.4 Topological distances
+
+In addition to comparisons between shared clades, support values and branch lengths, a popular method to compare phylogenies is based on topological metrics. Popular metrics like Robinson-Foulds and Cluster Information distances can be summarized using **summaryTopologicalDist**. Moreover, a common topological metric is the number of SPR moves to edit one tree into another tree. However, implementations are lacking in R to normalize SPR distances using the refined upper bound from Ding et al. (2011) (**normalizedSPR**) and computing SPR distances for polytomous trees (**multiSPR**). 
+
+```{r}
+# Read trees
+mol = read.tree("../testdata/003_MOL_IQTREE.contree")
+te = read.tree("../testdata/003_TE_ASC_IQTREE.contree")
+
+# RF and CID
+summaryTopologicalDist(mol, te)
+
+# Normalized SPR
+normalizedSPR(mol, te)
+```
 
 # 3. Comparison of DNA sequences
 
@@ -199,7 +194,7 @@ RNODE::splitOrdFromUnord(input="048_MORPH_data.nex", output_index = "048_MORPH",
 
 # 5. Manipulation of trees
 
-Given a tree A without support values (e.g. strict consensus of optimal trees) and a tree B with support values (e.g. majority consensus from bootstrap pseudo-replicates), *mapSupport()* returns the tree A with support values from shared clades with tree B. 
+Given a tree A without support values (e.g. strict consensus of optimal trees) and a tree B with support values (e.g. majority consensus from bootstrap pseudo-replicates), *mapSupport()* returns the tree A with support values from shared clades with tree B. For instance, the strict consensus of optimal trees and the majority consensus tree from bootstrap trees share 223 clades, presenting 6 unique clades in the strict consensus and 1 unique clade in the bootstrap tree.  
 
 ```{r}
 # Read trees
@@ -227,19 +222,52 @@ uniqueNodes(opt_with_bs[[1]], BS,
 Another option is mapping branch lengths:
 
 ```{r}
-# Load trees
-MOL = read.tree("../testdata/Whitcher2024_ML_MOL.contree")
-TE = read.tree("../testdata/Whitcher2024_ML_TE.contree")
+set.seed(1)
+# Simulate tree1
+tree1 <- rtree(n=8)
+# Simulate tree2 (similar to tree1, with one rearrangement and different branch lengths)
+tree2 = tree1
+tree2 <- rNNI(tree2, n = 1)  # perform one NNI (one rearrangement)
+edges_to_change <- sample(1:length(tree2$edge.length), 6)
+tree2$edge.length[edges_to_change] <- tree2$edge.length[edges_to_change] * runif(6, 0.5, 1.5)
+trees2 = list(tree1, tree2)
 
-# simulate two random trees with 5 tips (rtree generates branch lengths by default)
-set.seed(42)   
-tree1 <- rtree(5)
-tree2 <- rtree(6)
+# Compute the strict consensus tree
+strict <- consensus(list(tree1, tree2), p = 1.0)
 
-# show branch lengths
-tree1$edge.length
-tree2$edge.length
+# Map using minimum branch length per shared edge
+mapped_min <- map_branch_lengths(strict, trees2, method = "minimum")
+
+# Map using random tree
+mapped_rand <- map_branch_lengths(tree1, trees2, method = "random")
+
+# Set up 1x4 plotting
+png("../tutorial/trees_plot.png", width = 2400, height = 800, res = 150)  # high-resolution
+par(mfrow = c(1, 4), mar = c(4, 4, 2, 2))
+# Plot Tree 1
+plot(tree1, main = "Tree 1")
+ape::edgelabels(round(tree1$edge.length, 2), cex = 0.5)
+#ape::nodelabels(1:tree1$Nnode + length(tree1$tip.label), frame = "circle", cex = 0.5)
+# Plot Tree 2
+plot(tree2, main = "Tree 2")
+ape::edgelabels(round(tree2$edge.length, 2), cex = 0.5)
+#ape::nodelabels(1:tree2$Nnode + length(tree2$tip.label), frame = "circle", cex = 0.5)
+# Plot Strict Consensus
+plot(strict, main = "Strict Consensus")
+ape::nodelabels(1:strict$Nnode + length(strict$tip.label), frame = "circle", cex = 0.5)
+# Plot Mapped Minimum
+plot(mapped_min, main = "Mapped Minimum")
+ape::edgelabels(round(mapped_min$edge.length, 2), cex = 0.5)
+#ape::nodelabels(1:mapped_min$Nnode + length(mapped_min$tip.label), frame = "circle", cex = 0.5)
+dev.off()  # close the PNG device
 ```
+
+Using empirical data:
+
+```{r}
+
+```
+
 
 # 6. References
 
