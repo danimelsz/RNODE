@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# 1. Preamble
+# Preamble
 
 Tutorial to demonstrate the main functions available in the R package \code{RNODE}. This tutorial is organized in two sections related to preprocessing and post-processing of phylogenetic trees.
 
@@ -22,9 +22,9 @@ library(ggplot2)
 library(RNODE)
 ```
 
-# 2. Example 1: Comparison of support values between trees
+# 1. Example 1: Comparison of support values between trees
 
-## 2.1 Identify shared and unique clades
+## 1.1 Identify shared and unique clades
 
 Comparisons between phylogenetic trees are usually performed using topological distance metrics (e.g. Robinson-Foulds and SPR distances) but comparisons of support values between corresponding nodes are usually neglected. We propose the function **sharedNodes** to create a dataframe with node labels, descendants, and support values of shared clades between two phylogenetic trees, which facilitates descriptive and statistical comparisons of support values between corresponding nodes. Two examples are provided below.
 
@@ -78,7 +78,7 @@ uniqueNodes(a, b, composition=T, dataframe=T,
             )
 ```
 
-## 2.2 Support comparisons
+## 1.2 Support comparisons
 
 We can use **sharedNodes** to compare two empirical trees in .nwk format estimated in TNT. Polytomies and input trees with different taxon samples are accepted but names of corresponding leaves should be equal in the input trees.
 
@@ -103,7 +103,7 @@ ggplot(df, aes(as.numeric(Support_Tree_1), as.numeric(Support_Tree_2))) +
 
 As expected, there is a significant correlation between bootstrap values of MOL and TE trees (Spearman: rho = 0.89; P < 0.001). 
 
-## 2.3 Logistic regressions
+## 1.3 Logistic regressions
 
 If the user wants to test if support values of one tree predict the occurrence of clades in another tree, the function **retrodictNodes** creates a dataframe containing support values of tree 1 and the occurrence of the clade in tree 2, which can be used for logistic regressions.
 
@@ -126,7 +126,7 @@ exp(coef(model))
 
 Using the data set from Janssens et al. (2018), the logistic regression revealed an intercept of 0.009 (i.e. when bootstrap is 0 in the first tree, the odds of presence of the clade in the second tree is 0.009; P < 0.01). Furthermore, for every one-unit increase in bootstrap in the first tree, the odds of presence of the clade in the second tree increase by 1.075 (7.5%). 
 
-## 2.4 Branch length comparisons
+## 1.4 Branch length comparisons
 
 In addition to descendants and support values, branch lengths can be compared. Here we used two simple simulated examples.
 
@@ -161,7 +161,7 @@ ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
        y="Branch lengths in the TE tree \n")
 ```
 
-## 2.4 Topological distances
+## 1.4 Topological distances
 
 In addition to comparisons between shared clades, support values and branch lengths, a popular method to compare phylogenies is based on topological metrics. Popular metrics like Robinson-Foulds and Cluster Information distances can be summarized using **summaryTopologicalDist**. Moreover, a common topological metric is the number of SPR moves to edit one tree into another tree. However, implementations are lacking in R to normalize SPR distances using the refined upper bound from Ding et al. (2011) (**normalizedSPR**) and computing SPR distances for polytomous trees (**multiSPR**). 
 
@@ -177,9 +177,9 @@ summaryTopologicalDist(mol, te)
 normalizedSPR(mol, te)
 ```
 
-# 3. Comparison of DNA sequences
+# 2. Comparison of DNA sequences
 
-# 4. Manipulation of matrices
+# 3. Manipulation of matrices
 
 *splitOrdFromUnord* splits a Nexus morphological matrix into partitions of ordered and unordered characters
 
@@ -192,7 +192,9 @@ list_ordered=c(1, 6, 7, 8, 10, 12, 13, 14, 17, 19, 23, 26, 31, 35, 41, 44, 45, 4
 RNODE::splitOrdFromUnord(input="048_MORPH_data.nex", output_index = "048_MORPH", list_ordered, invariant = F)
 ```
 
-# 5. Manipulation of trees
+# 4. Manipulation of trees
+
+## 4.1 Mapping support
 
 Given a tree A without support values (e.g. strict consensus of optimal trees) and a tree B with support values (e.g. majority consensus from bootstrap pseudo-replicates), *mapSupport()* returns the tree A with support values from shared clades with tree B. For instance, the strict consensus of optimal trees and the majority consensus tree from bootstrap trees share 223 clades, presenting 6 unique clades in the strict consensus and 1 unique clade in the bootstrap tree.  
 
@@ -219,7 +221,9 @@ uniqueNodes(opt_with_bs[[1]], BS,
             sup.cex=.25)
 ```
 
-Another option is mapping branch lengths:
+## 4.2 Mapping branch lengths
+
+Another option is mapping branch lengths. We can map branch lengths to the strict consensus either using the minimum values from a pool of MPTs or randomly selecting one of the MPTs.
 
 ```{r}
 set.seed(1)
@@ -242,7 +246,7 @@ mapped_min <- map_branch_lengths(strict, trees2, method = "minimum")
 mapped_rand <- map_branch_lengths(tree1, trees2, method = "random")
 
 # Set up 1x4 plotting
-png("../tutorial/trees_plot.png", width = 2400, height = 800, res = 150)  # high-resolution
+png("../tutorial/example4.2_simulated.png", width = 2400, height = 800, res = 150)  # high-resolution
 par(mfrow = c(1, 4), mar = c(4, 4, 2, 2))
 # Plot Tree 1
 plot(tree1, main = "Tree 1")
@@ -262,10 +266,29 @@ ape::edgelabels(round(mapped_min$edge.length, 2), cex = 0.5)
 dev.off()  # close the PNG device
 ```
 
-Using empirical data:
+Using empirical data from Nakamura et al. 2025:
 
 ```{r}
+strict = read.tree("../testdata/cymb_IP_GB.1.nwk")
+mpts = read.tree("../testdata/cymb_IP_trees.nwk")
 
+# Map using minimum branch length per shared edge
+mapped_min <- mapBranchLength(strict, mpts, method = "minimum")
+
+# Plot strict + mapped side by side
+png("../tutorial/example4.2.png", width = 2400, height = 4000, res = 150)
+par(mfrow = c(1, 2),            # 1 row, 2 columns
+    mar = c(4, 4, 2, 2),        # margins
+    oma = c(1, 1, 1, 1))        # outer margins
+# Panel 1 — strict consensus
+plot(ladderize(strict),
+     main = "Strict Consensus Tree",
+     cex = 0.8)
+# Panel 2 — mapped branch lengths
+plot(ladderize(mapped_min),
+     main = "Mapped Branch Lengths (Minimum)",
+     cex = 0.8)
+dev.off()
 ```
 
 

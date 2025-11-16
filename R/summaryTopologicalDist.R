@@ -17,7 +17,7 @@
 #' # Example 2 (Calculates all metrics except the number of shared clades)
 #' tree1 = read.tree (text="(t1,(t2,(t3,(t4,t5)75)32)45);")
 #' tree2 = read.tree (text="(t1,(t6,(t3,(t4,t5)47)53)94);")
-#' summaryTopDistances (tree1, tree2, shared = F)
+#' summaryTopDistances (tree1, tree2)
 #'
 #' @export
 summaryTopologicalDist = function(tree1, tree2,

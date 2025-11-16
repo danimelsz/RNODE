@@ -11,8 +11,7 @@ compareBranchLength(
   outgroup = NULL,
   root = NULL,
   composition = F,
-  unique = F,
-  plot_heatmap = F
+  unique = F
 )
 }
 \arguments{
@@ -29,8 +28,6 @@ compareBranchLength(
 \item{composition}{Optional. Specify if composition of corresponding clades should be present in the dataframe (by default, composition = F)}
 
 \item{unique}{Optional. Show unique clades (default: unique = F)}
-
-\item{plot_heatmap}{Optional. Plot a heatmap of branch lengths.}
 }
 \description{
 Given two trees with branch lengths, return a dataframe containing lengths from matching branches.

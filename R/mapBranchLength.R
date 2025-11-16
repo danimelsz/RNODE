@@ -4,9 +4,8 @@
 #' @author Daniel YM Nakamura
 #'
 #' @param tree1 A phylo object without branch lengths
-#' @param tree2 A phylo object with branch lengths
-#' @param write Optional. Specify the name of tree file to be written locally (nothing is written if this parameter is not specified)
-#' @param root Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, root = F assumes that trees share the same root)
+#' @param trees2 A phylo object with branch lengths
+#' @param method. Optional. Method to sample branch lengths. If "random", randomly select one of the trees from trees2. If "minimum" (default), map the minimum values from the pool of MPTs (trees2) to each edge present in tree1
 #' @examples
 #' # Example 1 (identify unique nodes)
 #' tree1 = read.tree (text="(t1,(t3,(t2,(t4,t5))));")
@@ -14,7 +13,7 @@
 #' mapBranchLength (tree1, tree2)
 #'
 #' @export
-mapBranchLength <- function(tree1, trees2, method = c("random", "minimum")) {
+mapBranchLength <- function(tree1, trees2, method = "minimum") {
   # Dependencies
   if (!requireNamespace("ape", quietly = TRUE))
     stop("Package 'ape' is required.")

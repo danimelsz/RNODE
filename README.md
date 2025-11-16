@@ -8,6 +8,10 @@
 
 Copyright (C) Daniel Y. M. Nakamura 2025
 
+## Cite
+
+If you use **RNODE**, please cite this repository.
+
 ## Installation
 
 **RNODE** can be installed with the following command:
@@ -33,6 +37,7 @@ The following functions are available in **RNODE**:
 | *summaryTopologicalDist*  | Given two sets of trees, compute the number of shared clades, number of unique clades in each tree, Robinson-Foulds, and Cluster Information distance.  |
 | *filterMissing*           | Given a matrix (.nex or .tnt), delete taxa and/or characters containing only missing data (?). |
 | *splitOrdFromUnord*       | Given a morphological matrix (.nex or .tnt) and a list of ordered and unordered characters, split the matrix into two matrices. |
+| *mapBranchLength*              | Given one tree without branch lengths (e.g. strict consensus) and another tree(s) with branch lengths (e.g. MPTs), map the branch lengths from the latter to the former. |
 | *mapSupport*              | Given one tree with support values (e.g. majority consensus of bootstrap trees) and another tree without support values (e.g. strict consensus of optimal trees), map the support values from the former to the latter. |
 
 The following examples are designed for users with little experience. If you have questions, send a message using GitHub issues. 
@@ -133,7 +138,7 @@ As expected, there is a significant correlation between bootstrap values of MOL 
 
 #### Example 1.3 Logistic regressions
 
-If the user wants to test if support values of one tree predict the occurrence of clades in another tree, the function **retrodictNodes** creates a dataframe containing support values of tree 1 and the occurrence of the clade in tree 2, which can be used for logistic regressions.
+If the user wants to test if support values of one tree predict the occurrence of clades in another tree, the function *retrodictNodes* creates a dataframe containing support values of tree 1 and the occurrence of the clade in tree 2, which can be used for logistic regressions.
 
 ```
 # Load trees
@@ -175,14 +180,14 @@ ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
 ```
 
 <p align="center">
-  <a href="tutorial/example4_lengths.png"><img src="tutorial/example4_lengths.png" alt="df" width="100%"></a>
+  <a href="tutorial/example1.4_lengths.png"><img src="tutorial/example4_lengths.png" alt="df" width="100%"></a>
 </p>
 
 As expected, there is a significant correlation between bootstrap values of MOL and TE trees (lsinear model: estimate = 0.78; R-squared = 0.86; P < 0.001).
 
 #### Example 1.5 Topological distances
 
-In addition to comparisons between shared clades, support values and branch lengths, a popular method to compare phylogenies is based on topological metrics. Popular metrics like Robinson-Foulds and Cluster Information distances can be summarized using **summaryTopologicalDist**. Moreover, a common topological metric is the number of SPR moves to edit one tree into another tree. However, implementations are lacking in R to normalize SPR distances using the refined upper bound from Ding et al. (2011) (**normalizedSPR**) and computing SPR distances for polytomous trees (**multiSPR**). 
+In addition to comparisons between shared clades, support values and branch lengths, a popular method to compare phylogenies is based on topological metrics. Popular metrics like Robinson-Foulds and Cluster Information distances can be summarized using *summaryTopologicalDist*. Moreover, a common topological metric is the number of SPR moves to edit one tree into another tree. However, implementations are lacking in R to normalize SPR distances using the refined upper bound from Ding et al. (2011) (*normalizedSPR*) and computing SPR distances for polytomous trees (*multiSPR*). 
 
 ```
 # Read trees
@@ -204,7 +209,9 @@ The normalized SPR is 0.1931574.
 
 ### Example 4 Tree manipulation
 
-Given a tree A without support values (e.g. strict consensus of optimal trees) and a tree B with support values (e.g. majority consensus from bootstrap pseudo-replicates), *mapSupport()* returns the tree A with support values from shared clades with tree B. For instance, the strict consensus of optimal trees and the majority consensus tree from bootstrap trees share 223 clades, presenting 6 unique clades in the strict consensus and 1 unique clade in the bootstrap tree.  
+#### Example 4.1 Mapping support
+
+Given a tree A without support values (e.g. strict consensus of optimal trees) and a tree B with support values (e.g. majority consensus from bootstrap pseudo-replicates), *mapSupport* returns the tree A with support values from shared clades with tree B. For instance, the strict consensus of optimal trees and the majority consensus tree from bootstrap trees share 223 clades, presenting 6 unique clades in the strict consensus and 1 unique clade in the bootstrap tree.  
 
 ```
 # Read trees
@@ -219,12 +226,33 @@ opt_with_bs = mapSupport(opt, BS)
 opt_with_bs[1]
 ```
 
-Another option is mapping branch lengths from a pool of trees to a strict consensus:
+#### Example 4.2 Mapping branch lengths
+
+Finally, we can map branch lengths to the strict consensus either using the minimum values from a pool of MPTs or randomly selecting one of the MPTs. Using empirical data from Nakamura et al. 2025, we demonstrate the function map:
 
 ```
+strict = read.tree("../testdata/cymb_IP_GB.1.nwk")
+mpts = read.tree("../testdata/cymb_IP_trees.nwk")
 
+# Map using minimum branch length per shared edge
+mapped_min <- mapBranchLength(strict, mpts, method = "minimum")
+
+# Plot strict + mapped side by side
+png("../tutorial/example4.2.png", width = 2400, height = 4000, res = 150)
+par(mfrow = c(1, 2),            # 1 row, 2 columns
+    mar = c(4, 4, 2, 2),        # margins
+    oma = c(1, 1, 1, 1))        # outer margins
+# Panel 1 — strict consensus
+plot(ladderize(strict),
+     main = "Strict Consensus Tree",
+     cex = 0.8)
+# Panel 2 — mapped branch lengths
+plot(ladderize(mapped_min),
+     main = "Mapped Branch Lengths (Minimum)",
+     cex = 0.8)
+dev.off()
 ```
 
-## Cite
-
-If you use **RNODE**, please cite this repository.
+<p align="center">
+  <a href="tutorial/example4.2.png"><img src="tutorial/example4.2.png" alt="df" width="100%"></a>
+</p>

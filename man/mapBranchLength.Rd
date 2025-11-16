@@ -4,32 +4,14 @@
 \alias{mapBranchLength}
 \title{mapBranchLength}
 \usage{
-mapBranchLength(
-  tree1,
-  tree2,
-  write = NULL,
-  outgroup = NULL,
-  root = NULL,
-  plotTrees = F,
-  node.numbers = T,
-  tree.width = 10,
-  tree.height = 10,
-  tree.fsize = 0.5,
-  tree.adj = c(-1.5, 0.5),
-  tree.cex = 2,
-  tree.output = "trees_unique_nodes.pdf"
-)
+mapBranchLength(tree1, trees2, method = "minimum")
 }
 \arguments{
 \item{tree1}{A phylo object without branch lengths}
 
-\item{tree2}{A phylo object with branch lengths}
+\item{trees2}{A phylo object with branch lengths}
 
-\item{write}{Optional. Specify the name of tree file to be written locally (nothing is written if this parameter is not specified)}
-
-\item{outgroup}{Optional. Specify outgroup taxa to remove (by default, outgroup = F assumes that the user does not want to remove outgroup taxa)}
-
-\item{root}{Optional. Specify the same root for both trees, which is recommended to facilitate tree comparisons (by default, root = F assumes that trees share the same root)}
+\item{method.}{Optional. Method to sample branch lengths. If "random", randomly select one of the trees from trees2. If "minimum" (default), map the minimum values from the pool of MPTs (trees2) to each edge present in tree1}
 }
 \description{
 Given a tree 1 without branch lengths (e.g. strict consensus of optimal trees) and a tree 2 with branch lengths (e.g. each MPT before reconciliation into a strict consensus), return tree 1 with branch lengths from shared clades with tree 2.
