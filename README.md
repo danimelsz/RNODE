@@ -180,7 +180,7 @@ ggplot(df, aes(as.numeric(EdgeLength_tree1), as.numeric(EdgeLength_tree2))) +
 ```
 
 <p align="center">
-  <a href="tutorial/example1.4_lengths.png"><img src="tutorial/example4_lengths.png" alt="df" width="100%"></a>
+  <a href="tutorial/example1.4_lengths.png"><img src="tutorial/example1.4_lengths.png" alt="df" width="100%"></a>
 </p>
 
 As expected, there is a significant correlation between bootstrap values of MOL and TE trees (lsinear model: estimate = 0.78; R-squared = 0.86; P < 0.001).
