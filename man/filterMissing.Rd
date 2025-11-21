@@ -7,7 +7,7 @@
 filterMissing(input, output_path, missing = "row")
 }
 \arguments{
-\item{input}{Input file (morphological matrix in Nexus or TNT format).}
+\item{input}{Input file (morphological matrix in Nexus format).}
 
 \item{output_path}{Output path (e.g. if the user specify it as "Desktop/Index", the output files will be "Desktop/Index_ORDERED.nexus" and "Desktop/Index_UNORDERED.nexus")}
 

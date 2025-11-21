@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Preamble
 
-Tutorial to demonstrate the main functions available in the R package \code{RNODE}. This tutorial is organized in two sections related to preprocessing and post-processing of phylogenetic trees.
+Tutorial to demonstrate the main functions available in the R package \code{RNODE}. 
 
 ```{r warning=F, message=F}
 # Set the working directory 
@@ -181,6 +181,26 @@ normalizedSPR(mol, te)
 
 # 3. Manipulation of matrices
 
+## 3.1 Handling morphological matrices
+
+The function *filterMissing* deletes taxa and/or characters containing only missing data. The output file will be saved as *test_filterMissing_FILTERED.nexus*:
+
+```{r}
+filterMissing(input="../testdata/test_filterMissing.nexus", 
+              output_path="../testdata/test_filterMissing",
+              missing="both")
+```
+
+The function *filterInvariants* deletes invariant characters, which is useful to accelerate the graph searches. In Maximum Likelihood and Bayesian analyses using the MKv model with ascertainment bias correction (ASC), invariants must be deleted. Here, we follow the definition of invariant from IQ-Tree, characterized by: (1) constant sites containing only a single character state in all sequences, (2) partially constant sites (N and/or -), and (3) ambiguously constant sites (e.g. C, Y and -).
+
+```{r}
+filterInvariants(input="../testdata/015_MORPH_data.nexus",
+                 output_index="../testdata/015_MORPH_data")
+```
+
+
+## 3.2 Splitting ordered from unordered characters
+
 *splitOrdFromUnord* splits a Nexus morphological matrix into partitions of ordered and unordered characters
 
 ```{r}
@@ -191,6 +211,14 @@ list_ordered=c(1, 6, 7, 8, 10, 12, 13, 14, 17, 19, 23, 26, 31, 35, 41, 44, 45, 4
 
 RNODE::splitOrdFromUnord(input="048_MORPH_data.nex", output_index = "048_MORPH", list_ordered, invariant = F)
 ```
+
+## 3.3 Split by the number of states
+
+*splitNoStates*
+
+## 3.4 Find equal-length partitions
+
+*findEqualLength*
 
 # 4. Manipulation of trees
 
@@ -223,7 +251,7 @@ uniqueNodes(opt_with_bs[[1]], BS,
 
 ## 4.2 Mapping branch lengths
 
-Another option is mapping branch lengths. We can map branch lengths to the strict consensus either using the minimum values from a pool of MPTs or randomly selecting one of the MPTs.
+Another option is mapping branch lengths using *mapBranchLength*. We can map branch lengths to the strict consensus either using the minimum values from a pool of MPTs or randomly selecting one of the MPTs.
 
 ```{r}
 set.seed(1)
@@ -240,10 +268,10 @@ trees2 = list(tree1, tree2)
 strict <- consensus(list(tree1, tree2), p = 1.0)
 
 # Map using minimum branch length per shared edge
-mapped_min <- map_branch_lengths(strict, trees2, method = "minimum")
+mapped_min <- mapBranchLength(strict, trees2, method = "minimum")
 
 # Map using random tree
-mapped_rand <- map_branch_lengths(tree1, trees2, method = "random")
+mapped_rand <- mapBranchLength(tree1, trees2, method = "random")
 
 # Set up 1x4 plotting
 png("../tutorial/example4.2_simulated.png", width = 2400, height = 800, res = 150)  # high-resolution

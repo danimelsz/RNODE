@@ -228,7 +228,7 @@ opt_with_bs[1]
 
 #### Example 4.2 Mapping branch lengths
 
-Finally, we can map branch lengths to the strict consensus either using the minimum values from a pool of MPTs or randomly selecting one of the MPTs. Using empirical data from Nakamura et al. 2025, we demonstrate the function map:
+Finally, we can map branch lengths to the strict consensus either using the minimum values from a pool of MPTs or randomly selecting one of the MPTs. Using empirical data from Nakamura et al. 2025, we demonstrate the function *mapBranchLength*:
 
 ```
 strict = read.tree("../testdata/cymb_IP_GB.1.nwk")

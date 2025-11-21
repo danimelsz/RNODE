@@ -7,7 +7,7 @@
 splitOrdFromUnord(input, output_index, list_ordered, invariant = F)
 }
 \arguments{
-\item{input}{Input file (concatenated morphological matrix in Nexus or TNT format).}
+\item{input}{Input file (concatenated morphological matrix in Nexus format).}
 
 \item{output_index}{Output index (e.g. if the user specify it as "Desktop/Index", the output files will be "Desktop/Index_ORDERED.nexus" and "Desktop/Index_UNORDERED.nexus")}
 

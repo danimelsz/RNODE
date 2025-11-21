@@ -2,7 +2,7 @@
 #' @name filterMissing
 #' @description Filter taxa (rows) and/or characters (columns) in a matrix containing only missing data.
 #' @author Daniel YM Nakamura
-#' @param input Input file (morphological matrix in Nexus or TNT format).
+#' @param input Input file (morphological matrix in Nexus format).
 #' @param output_path Output path (e.g. if the user specify it as "Desktop/Index", the output files will be "Desktop/Index_ORDERED.nexus" and "Desktop/Index_UNORDERED.nexus")
 #' @param missing Parameter specifying if rows and/or columns in which all cells are missing data (?) should be removed. Options: "row" (default), "column", "both".
 #' @examples
