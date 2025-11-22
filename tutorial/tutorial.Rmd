@@ -183,7 +183,7 @@ normalizedSPR(mol, te)
 
 ## 3.1 Handling morphological matrices
 
-The function *filterMissing* deletes taxa and/or characters containing only missing data. The output file will be saved as *test_filterMissing_FILTERED.nexus*:
+The function *filterMissing* deletes taxa and/or characters containing only missing data. In the following example, the output file will be saved as *test_filterMissing_FILTERED.nexus*:
 
 ```{r}
 filterMissing(input="../testdata/test_filterMissing.nexus", 
@@ -191,17 +191,14 @@ filterMissing(input="../testdata/test_filterMissing.nexus",
               missing="both")
 ```
 
-The function *filterInvariants* deletes invariant characters, which is useful to accelerate the graph searches. In Maximum Likelihood and Bayesian analyses using the MKv model with ascertainment bias correction (ASC), invariants must be deleted. Here, we follow the definition of invariant from IQ-Tree, characterized by: (1) constant sites containing only a single character state in all sequences, (2) partially constant sites (N and/or -), and (3) ambiguously constant sites (e.g. C, Y and -).
+The function *filterInvariants* deletes invariant characters, which is useful to accelerate the graph searches. In Maximum Likelihood and Bayesian analyses using the MKv model with ascertainment bias correction (ASC), invariants must be deleted. Here, we follow the definition of invariant from IQ-Tree, characterized by: (1) constant sites containing only a single character state in all sequences, (2) partially constant sites (N and/or -), and (3) ambiguously constant sites (e.g. C, Y and -). In the following example, 122 invariants are detected.
 
 ```{r}
 filterInvariants(input="../testdata/015_MORPH_data.nexus",
                  output_index="../testdata/015_MORPH_data")
 ```
 
-
-## 3.2 Splitting ordered from unordered characters
-
-*splitOrdFromUnord* splits a Nexus morphological matrix into partitions of ordered and unordered characters
+The function *splitOrdFromUnord* splits a Nexus morphological matrix into partitions of ordered and unordered characters based on a list of ordered characters.
 
 ```{r}
 # Data input of list of ordered characters
@@ -209,14 +206,12 @@ setwd("../../../B2_TEvsMOL/Other/OLD/048_Fossils/iqtree/")
 
 list_ordered=c(1, 6, 7, 8, 10, 12, 13, 14, 17, 19, 23, 26, 31, 35, 41, 44, 45, 48, 51, 54, 55, 68, 71, 72, 92, 94, 96, 102, 105, 108, 109, 128, 129, 130, 131, 132, 135, 142, 144, 152, 153, 193)
 
-RNODE::splitOrdFromUnord(input="048_MORPH_data.nex", output_index = "048_MORPH", list_ordered, invariant = F)
+RNODE::splitOrdFromUnord(input="048_MORPH_data.nex", output_index = "048_MORPH", list_ordered)
 ```
 
-## 3.3 Split by the number of states
+The function *splitNoStates*
 
-*splitNoStates*
-
-## 3.4 Find equal-length partitions
+## 3.2 Find equal-length partitions
 
 *findEqualLength*
 

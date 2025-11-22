@@ -35,8 +35,9 @@ The following functions are available in **RNODE**:
 | *normalizedSPR*           | Given two binary trees, compute the normalized SPR distance, following Ding et al. (2011). |
 | *multiSPR*                | Given two sets of binary trees (e.g. MPTs), compute (normalized) SPR distances between two randomly selected trees or between all pairs of trees (summarized as mean or minimum values). |
 | *summaryTopologicalDist*  | Given two sets of trees, compute the number of shared clades, number of unique clades in each tree, Robinson-Foulds, and Cluster Information distance.  |
-| *filterMissing*           | Given a matrix (.nex or .tnt), delete taxa and/or characters containing only missing data (?). |
-| *splitOrdFromUnord*       | Given a morphological matrix (.nex or .tnt) and a list of ordered and unordered characters, split the matrix into two matrices. |
+| *filterMissing*           | Given a matrix, delete taxa and/or characters containing only missing data (?). |
+| *filterInvariants*           | Given a matrix, delete characters containing only invariants. |
+| *splitOrdFromUnord*       | Given a morphological matrix and a list of ordered and unordered characters, split the matrix into two matrices. |
 | *mapBranchLength*              | Given one tree without branch lengths (e.g. strict consensus) and another tree(s) with branch lengths (e.g. MPTs), map the branch lengths from the latter to the former. |
 | *mapSupport*              | Given one tree with support values (e.g. majority consensus of bootstrap trees) and another tree without support values (e.g. strict consensus of optimal trees), map the support values from the former to the latter. |
 
@@ -205,7 +206,22 @@ The normalized SPR is 0.1931574.
 
 ### Example 2 Comparison of DNA sequences
 
-### Example 3 Matrix manipulation
+### Example 3 Matrix handling
+
+The function *filterMissing* deletes taxa and/or characters containing only missing data. In the following example, the output file will be saved as *test_filterMissing_FILTERED.nexus*:
+
+```
+filterMissing(input="../testdata/test_filterMissing.nexus", 
+              output_path="../testdata/test_filterMissing",
+              missing="both")
+```
+
+The function *filterInvariants* deletes invariant characters, which is useful to accelerate the graph searches. In Maximum Likelihood and Bayesian analyses using the MKv model with ascertainment bias correction (ASC), invariants must be deleted. Here, we follow the definition of invariant from IQ-Tree, characterized by: (1) constant sites containing only a single character state in all sequences, (2) partially constant sites (N and/or -), and (3) ambiguously constant sites (e.g. C, Y and -). In the following example, 122 invariants are detected.
+
+```
+filterInvariants(input="../testdata/015_MORPH_data.nexus",
+                 output_index="../testdata/015_MORPH_data")
+```
 
 ### Example 4 Tree manipulation
 

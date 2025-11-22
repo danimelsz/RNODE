@@ -16,7 +16,7 @@ Delete invariant characters in a morphological matrix. We follow the definition 
 }
 \examples{
 # Example
-filterInvariants
+filterInvariants(input="../testdata/015_MORPH_data.nexus", output_index="../testdata/015_MORPH_data")
 
 }
 \author{
