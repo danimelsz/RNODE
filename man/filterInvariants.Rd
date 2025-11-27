@@ -7,7 +7,7 @@
 filterInvariants(input, output_index)
 }
 \arguments{
-\item{input}{Input file (molecular or morphological matrix in Nexus).}
+\item{input}{Input file (molecular or morphological matrix in Nexus or already loaded as a matrix object in R).}
 
 \item{output_index}{Output index (e.g. if the user specify it as "Desktop/Index", the output files will be "Desktop/Index_onlyVARIANTS.nexus")}
 }

@@ -20,7 +20,7 @@ If you use **RNODE**, please cite this repository.
 devtools::install_github("danimelsz/RNODE")
 ```
 
-**RNODE** was tested in R. v. 4.2.2. Dependencies are expected to be automatically installed. Alternatively, try to install manually *ape*, *dendextend*, *phangorn*, *phytools*, *stringr*, *TreeDist*, and *TreeTools*.
+**RNODE** was tested in R. v. 4.5.2. Dependencies are expected to be automatically installed. Alternatively, try to install manually *ape*, *dendextend*, *phangorn*, *phytools*, *stringr*, *TreeDist*, and *TreeTools*.
 
 ## Usage
 
@@ -188,7 +188,7 @@ As expected, there is a significant correlation between bootstrap values of MOL 
 
 #### Example 1.5 Topological distances
 
-In addition to comparisons between shared clades, support values and branch lengths, a popular method to compare phylogenies is based on topological metrics. Popular metrics like Robinson-Foulds and Cluster Information distances can be summarized using *summaryTopologicalDist*. Moreover, a common topological metric is the number of SPR moves to edit one tree into another tree. However, implementations are lacking in R to normalize SPR distances using the refined upper bound from Ding et al. (2011) (*normalizedSPR*) and computing SPR distances for polytomous trees (*multiSPR*). 
+In addition to comparisons between shared clades, support values and branch lengths, a popular method to compare phylogenies is based on topological metrics. Popular metrics like Robinson-Foulds and Cluster Information distances can be summarized using *summaryTopologicalDist*. Moreover, a common topological metric is the number of SPR moves to edit one tree into another tree. However, implementations are lacking in R to normalize SPR distances using the refined upper bound from Ding et al. (2011) (*normalizedSPR*) and computing SPR distances for multiple trees (*multiSPR*). 
 
 ```
 # Read trees
@@ -221,6 +221,15 @@ The function *filterInvariants* deletes invariant characters, which is useful to
 ```
 filterInvariants(input="../testdata/015_MORPH_data.nexus",
                  output_index="../testdata/015_MORPH_data")
+```
+
+The function *splitOrdFromUnord* splits a Nexus morphological matrix into partitions of ordered and unordered characters based on a list of ordered characters.
+
+```
+# Data input of list of ordered characters
+list_ordered=c(1, 6, 7, 8, 10, 12, 13, 14, 17, 19, 23, 26, 31, 35, 41, 44, 45, 48, 51, 54, 55, 68, 71, 72, 92, 94, 96, 102, 105, 108, 109, 128, 129, 130, 131, 132, 135, 142, 144, 152, 153, 193)
+
+splitOrdFromUnord(input="../testdata/048_MORPH_data.nex", output_index = "../testdata/048_MORPH", list_ordered=list_ordered)
 ```
 
 ### Example 4 Tree manipulation

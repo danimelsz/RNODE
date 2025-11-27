@@ -2,26 +2,35 @@
 #' @name filterInvariants
 #' @description Delete invariant characters in a morphological matrix. We follow the definition of invariant site from IQ-Tree: (1) constant sites containing only a single character state in all sequences, (2) partially constant sites (N and/or -), and (3) ambiguously constant sites (e.g. C, Y and -).
 #' @author Daniel YM Nakamura
-#' @param input Input file (molecular or morphological matrix in Nexus or already loaded as a matrix object in R).
+#' @param input Input file (molecular or morphological matrix loaded locally or already loaded as a matrix object in R).
+#' @param input_format To load from a local file: 'nexus' or 'tnt'.
 #' @param output_index Output index (e.g. if the user specify it as "Desktop/Index", the output files will be "Desktop/Index_onlyVARIANTS.nexus")
 #' @examples
 #' # Example
 #' filterInvariants(input="../testdata/015_MORPH_data.nexus", output_index="../testdata/015_MORPH_data")
 #'
 #' @export
-filterInvariants <- function(input, output_index) {
+filterInvariants <- function(input, input_format, output_index) {
 
-  # --- Load input ---
-  if (is.character(input) && file.exists(input)) {
-    mat <- TreeTools::ReadCharacters(input)
+  # Load matrix
+  if (is.matrix(input) || is.data.frame(input)) {
+    # Already loaded matrix
+    mat <- as.matrix(input)
+
   } else {
-    mat <- input
-    if (!is.matrix(mat) && !is.data.frame(mat)) {
-      stop("Input must be either a matrix/data.frame or a valid file path.")
+    # Read from a local file
+    if (is.null(input_format)) {
+      stop("If 'input' is a file path, you must provide input_format = 'nexus' or 'tnt'")
     }
+    if (input_format == "nexus") {
+      mat <- TreeTools::ReadCharacters(input)
+    } else if (input_format == "tnt") {
+      mat <- TreeTools::ReadTntCharacters(input)
+    } else {
+      stop("input_format must be 'nexus' or 'tnt'")
+    }
+    mat <- as.matrix(mat)
   }
-
-  mat <- as.matrix(mat)
 
   # --- Helper: parse states ---
   parse_state <- function(x) {
