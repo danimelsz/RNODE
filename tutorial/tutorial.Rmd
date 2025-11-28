@@ -210,114 +210,34 @@ splitOrdFromUnord(input="../testdata/048_MORPH_data.nex", output_index = "../tes
 The function *splitNoStates* splits characters from a Nexus morphological matrix according to their number of character-states. This procedure has been recommended to run phylogenetic analyses with the MK and MKv models (the 'K' refers to the number of states). Khakurel et al. (2024) demonstrated that MK models with high K values can understimate the branch lengths, whereas MK models with small K values can overstimate them. As such, some recent studies have partitioned morphological characters according to their number of states (e.g. Černý & Simonoff 2023).
 
 ```{r}
-splitNoStates <- function(input, 
-                          input_format = NULL, 
-                          ambiguity_addState = FALSE, 
-                          inapplicable_addState = FALSE,
-                          output_index = "output",
-                          log = FALSE) {
-  
-  # -------------------------
-  # 1. Load matrix
-  # -------------------------
-  if (is.matrix(input) || is.data.frame(input)) {
-    mat <- as.matrix(input)
-    
-  } else {
-    if (is.null(input_format)) {
-      stop("If 'input' is a file path, you must provide input_format = 'nexus' or 'tnt'")
-    }
-    if (input_format == "nexus") {
-      mat <- TreeTools::ReadCharacters(input)
-    } else if (input_format == "tnt") {
-      mat <- TreeTools::ReadTntCharacters(input)
-    } else {
-      stop("input_format must be 'nexus' or 'tnt'")
-    }
-    mat <- as.matrix(mat)
-  }
-  
-  # -------------------------
-  # 2. Count states per column
-  # -------------------------
-  if (ambiguity_addState) {
-    
-    # Simple count: everything counts as a unique state, 
-    # including ambiguity tokens and possibly "-"
-    uniq_counts <- apply(mat, 2, function(x) length(unique(x)))
-    
-  } else {
-    
-    # Collapse ambiguities — extract only digits and optionally "-"
-    count_states <- function(column) {
-      
-      # Split polystates, e.g., "01" → "0","1"
-      states <- unlist(strsplit(column, split = ""))
-      
-      # Keep digits always
-      digit_states <- states[grepl("[0-9]", states)]
-      
-      # Optionally include "-"
-      if (inapplicable_addState) {
-        dash_states <- states[states == "-"]
-      } else {
-        dash_states <- character(0)
-      }
-      
-      # Combine allowed states
-      keep_states <- c(digit_states, dash_states)
-      
-      length(unique(keep_states))
-    }
-    
-    uniq_counts <- apply(mat, 2, count_states)
-  }
-  
-  # -------------------------
-  # 3. Split matrix
-  # -------------------------
-  state_sizes <- sort(unique(uniq_counts))
-  message("Generating ", length(state_sizes), " split matrices: ", 
-          paste(state_sizes, collapse = ", "))
-  
-  mat_split <- lapply(state_sizes, function(k) {
-    mat[, uniq_counts == k, drop = FALSE]
-  })
-  
-  names(mat_split) <- paste0("mat", state_sizes)
-  
-  # -------------------------
-  # 4. Optional log
-  # -------------------------
-  if (log) {
-    log_file <- paste0(output_index, "_log.txt")
-    con <- file(log_file, open = "wt")
-    
-    writeLines("=== Split Matrix Log ===", con)
-    writeLines(paste("Original matrix dimensions:", 
-                     nrow(mat), "x", ncol(mat)), con)
-    writeLines(paste("ambiguity_addState:", ambiguity_addState), con)
-    writeLines(paste("inapplicable_addState:", inapplicable_addState), con)
-    writeLines("", con)
-    
-    for (k in state_sizes) {
-      idx <- which(uniq_counts == k)
-      writeLines(paste0("Matrix mat", k, " (", length(idx), " columns):"), con)
-      writeLines(paste("  Original column indices:", 
-                       paste(idx, collapse = ", ")), con)
-      writeLines("", con)
-    }
-    
-    close(con)
-    message("Log file written to: ", log_file)
-  }
-  
-  return(mat_split)
-}
+# Synthetic example
+mat <- matrix(c(
+  "0","1","01","-","?","[01]","1","0",   # row1
+  "0","1","02","-","?","[02]","1","0",   # row2
+  "1","0","2" ,"-" ,"?" ,"[012]","1","0", # row3
+  "-" ,"-","-" ,"-" ,"?" ,"-","1","0"    # row4
+), nrow = 4, byrow = TRUE)
 
-a = splitNoStates(input = "../testdata/015_MORPH_data.nexus", input_format = "nexus", output_index = "../testdata/015_MORPH_data", ambiguity_addState = T, inapplicable_addState = T, log=T)
+colnames(mat) <- paste0("C", 1:ncol(mat))
+mat
+
+# Case A: ignore ambiguities, ignore "-" (default)
+outA <- splitNoStates(mat, ambiguity_addState = FALSE, inapplicable_addState = FALSE, write=F)
+outA
+
+# Case B: ignore ambiguities, count "-" as a state
+outB <- splitNoStates(mat, ambiguity_addState = FALSE, inapplicable_addState = TRUE, write=F)
+outB
+
+# Case C: treat ambiguous tokens as separate states (ambiguity_addState = TRUE)
+outC <- splitNoStates(mat, ambiguity_addState = TRUE, inapplicable_addState = T, write=F)
+outC
 ```
 
+```{r}
+# Empirical example
+a = splitNoStates(input = "../testdata/015_MORPH_data.nexus", input_format = "nexus", output_index = "../testdata/015_MORPH_data", ambiguity_addState = T, inapplicable_addState = T, log=T, write=T)
+```
 
 ## 3.2 Find equal-length partitions
 

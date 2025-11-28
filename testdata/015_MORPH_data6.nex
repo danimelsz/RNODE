@@ -1,0 +1,28 @@
+#NEXUS
+[Data written by write.nexus.data.R, Fri Nov 28 10:41:57 2025]
+BEGIN DATA;
+  DIMENSIONS NTAX=19 NCHAR=1;
+  FORMAT DATATYPE=STANDARD MISSING=? GAP=-  symbols="0123456789";
+  MATRIX
+    Aptenodytes_forsteri1         0
+    Aptenodytes_patagonicus1      0
+    Pygoscelis_antarctica1        2
+    Pygoscelis_papua1             1
+    Pygoscelis_adeliae1           4
+    Megadyptes_antipodes1         3
+    Eudyptes_chrysocome1          2
+    Eudyptes_chrysolophus1        2
+    Eudyptes_filholi1             2
+    Eudyptes_moseleyi1            2
+    Eudyptes_pachyrhynchus1       2
+    Eudyptes_robustus1            2
+    Eudyptes_schlegeli1           2
+    Eudyptes_sclateri1            0
+    Eudyptula_minor1              5
+    Spheniscus_demersus1          0
+    Spheniscus_magellanicus1      0
+    Spheniscus_humboldti1         1
+    Spheniscus_mendiculus1        0
+  ;
+END;
+

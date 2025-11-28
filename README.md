@@ -14,13 +14,11 @@ If you use **RNODE**, please cite this repository.
 
 ## Installation
 
-**RNODE** can be installed with the following command:
+**RNODE** was tested in R. v. 4.5.2 and can be installed with the following command:
 
 ```
 devtools::install_github("danimelsz/RNODE")
 ```
-
-**RNODE** was tested in R. v. 4.5.2. Dependencies are expected to be automatically installed. Alternatively, try to install manually *ape*, *dendextend*, *phangorn*, *phytools*, *stringr*, *TreeDist*, and *TreeTools*.
 
 ## Usage
 
@@ -28,18 +26,19 @@ The following functions are available in **RNODE**:
 
 | Function                  | Description |
 |:--------------------------|:------------|
-| *sharedNodes*             | Given two input trees, compare shared clades. The output is (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.  |
-| *uniqueNodes*             | Given two input trees, identify unique clades. The output is two lists containing unique clades and support values in each tree.  |
-| *retrodictNodes*          | Given two input trees, create a dataframe containing support values of one tree and clade occurrence  of another tree. |
-| *compareBranchLength*             | Given two input trees, compare branch lengths of internal edges (shared clades) and terminal edges (shared leaves). The output is a dataframe with node labels and branch lengths.  |
-| *normalizedSPR*           | Given two binary trees, compute the normalized SPR distance, following Ding et al. (2011). |
-| *multiSPR*                | Given two sets of binary trees (e.g. MPTs), compute (normalized) SPR distances between two randomly selected trees or between all pairs of trees (summarized as mean or minimum values). |
-| *summaryTopologicalDist*  | Given two sets of trees, compute the number of shared clades, number of unique clades in each tree, Robinson-Foulds, and Cluster Information distance.  |
+| *compareBranchLength*     | Given two input trees, compare branch lengths of internal edges (shared clades) and terminal edges (shared leaves). The output is a dataframe with node labels and branch lengths.  |
+| *filterInvariants*        | Given a matrix, delete characters containing only invariants. |
 | *filterMissing*           | Given a matrix, delete taxa and/or characters containing only missing data (?). |
-| *filterInvariants*           | Given a matrix, delete characters containing only invariants. |
-| *splitOrdFromUnord*       | Given a morphological matrix and a list of ordered and unordered characters, split the matrix into two matrices. |
-| *mapBranchLength*              | Given one tree without branch lengths (e.g. strict consensus) and another tree(s) with branch lengths (e.g. MPTs), map the branch lengths from the latter to the former. |
+| *mapBranchLength*         | Given one tree without branch lengths (e.g. strict consensus) and another tree(s) with branch lengths (e.g. MPTs), map the branch lengths from the latter to the former. |
 | *mapSupport*              | Given one tree with support values (e.g. majority consensus of bootstrap trees) and another tree without support values (e.g. strict consensus of optimal trees), map the support values from the former to the latter. |
+| *multiSPR*                | Given two sets of binary trees (e.g. MPTs), compute (normalized) SPR distances between two randomly selected trees or between all pairs of trees (summarized as mean or minimum values). |
+| *normalizedSPR*           | Given two binary trees, compute the normalized SPR distance, following Ding et al. (2011). |
+| *retrodictNodes*          | Given two input trees, create a dataframe containing support values of one tree and clade occurrence  of another tree. |
+| *sharedNodes*             | Given two input trees, compare shared clades. The output is (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.  |
+| *splitNoStates*           | Given a morphological matrix, split it based on the number of character-states for MK(v) models.
+| *splitOrdFromUnord*       | Given a morphological matrix and a list of ordered and unordered characters, split the matrix into two matrices. |
+| *summaryTopologicalDist*  | Given two sets of trees, compute the number of shared clades, number of unique clades in each tree, Robinson-Foulds, and Cluster Information distance.  |
+| *uniqueNodes*             | Given two input trees, identify unique clades. The output is two lists containing unique clades and support values in each tree.  |
 
 The following examples are designed for users with little experience. If you have questions, send a message using GitHub issues. 
 
@@ -208,6 +207,8 @@ The normalized SPR is 0.1931574.
 
 ### Example 3 Matrix handling
 
+#### Example 3.1 Morphological matrix
+
 The function *filterMissing* deletes taxa and/or characters containing only missing data. In the following example, the output file will be saved as *test_filterMissing_FILTERED.nexus*:
 
 ```
@@ -223,7 +224,7 @@ filterInvariants(input="../testdata/015_MORPH_data.nexus",
                  output_index="../testdata/015_MORPH_data")
 ```
 
-The function *splitOrdFromUnord* splits a Nexus morphological matrix into partitions of ordered and unordered characters based on a list of ordered characters.
+The function *splitOrdFromUnord* splits a morphological matrix into partitions of ordered and unordered characters based on a list of ordered characters.
 
 ```
 # Data input of list of ordered characters
@@ -231,6 +232,16 @@ list_ordered=c(1, 6, 7, 8, 10, 12, 13, 14, 17, 19, 23, 26, 31, 35, 41, 44, 45, 4
 
 splitOrdFromUnord(input="../testdata/048_MORPH_data.nex", output_index = "../testdata/048_MORPH", list_ordered=list_ordered)
 ```
+
+The function *splitNoStates* splits characters from a morphological matrix according to their number of character-states. This procedure has been recommended to run phylogenetic analyses with the MK and MKv models (the 'K' refers to the number of states). Khakurel et al. (2024) demonstrated that MK models with high K values can understimate the branch lengths, whereas MK models with small K values can overstimate them. As such, some recent studies have partitioned morphological characters according to their number of states (e.g. Černý & Simonoff 2023).
+
+```
+plitNoStates(input = "../testdata/015_MORPH_data.nexus", input_format = "nexus", output_index = "../testdata/015_MORPH_data", ambiguity_addState = T, inapplicable_addState = T, log=T, write=T)
+```
+
+#### Example 3.2 Dynamic homology
+
+
 
 ### Example 4 Tree manipulation
 
