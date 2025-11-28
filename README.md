@@ -1,4 +1,4 @@
-# RNODE: Comparisons of topologies and support between phylogenetic trees
+# RNODE: Comparisons of topologies, support, and branch lengths between phylogenetic trees
 
 [![language](https://img.shields.io/badge/language-R-blue?style=flat&logo=r&logoColor=white)](https://www.r-project.org)
 [![author](https://img.shields.io/badge/author-DYM_Nakamura-blue?logo=googlescholar&logoColor=white)](https://scholar.google.com/citations?user=c0W8Cm8AAAAJ&hl=en)
@@ -24,21 +24,21 @@ devtools::install_github("danimelsz/RNODE")
 
 The following functions are available in **RNODE**:
 
-| Function                  | Description |
-|:--------------------------|:------------|
-| *compareBranchLength*     | Given two input trees, compare branch lengths of internal edges (shared clades) and terminal edges (shared leaves). The output is a dataframe with node labels and branch lengths.  |
-| *filterInvariants*        | Given a matrix, delete characters containing only invariants. |
-| *filterMissing*           | Given a matrix, delete taxa and/or characters containing only missing data (?). |
-| *mapBranchLength*         | Given one tree without branch lengths (e.g. strict consensus) and another tree(s) with branch lengths (e.g. MPTs), map the branch lengths from the latter to the former. |
-| *mapSupport*              | Given one tree with support values (e.g. majority consensus of bootstrap trees) and another tree without support values (e.g. strict consensus of optimal trees), map the support values from the former to the latter. |
-| *multiSPR*                | Given two sets of binary trees (e.g. MPTs), compute (normalized) SPR distances between two randomly selected trees or between all pairs of trees (summarized as mean or minimum values). |
-| *normalizedSPR*           | Given two binary trees, compute the normalized SPR distance, following Ding et al. (2011). |
-| *retrodictNodes*          | Given two input trees, create a dataframe containing support values of one tree and clade occurrence  of another tree. |
-| *sharedNodes*             | Given two input trees, compare shared clades. The output is (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.  |
-| *splitNoStates*           | Given a morphological matrix, split it based on the number of character-states for MK(v) models.
-| *splitOrdFromUnord*       | Given a morphological matrix and a list of ordered and unordered characters, split the matrix into two matrices. |
-| *summaryTopologicalDist*  | Given two sets of trees, compute the number of shared clades, number of unique clades in each tree, Robinson-Foulds, and Cluster Information distance.  |
-| *uniqueNodes*             | Given two input trees, identify unique clades. The output is two lists containing unique clades and support values in each tree.  |
+| Function                  | Class            | Description |
+|:--------------------------|:-----------------|:------------|
+| *compareBranchLength*     | Tree comparison  | Given two input trees, compare branch lengths of internal edges (shared clades) and terminal edges (shared leaves). The output is a dataframe with node labels and branch lengths.  |
+| *multiSPR*                | Tree comparison  | Given two sets of binary trees (e.g. MPTs), compute (normalized) SPR distances between two randomly selected trees or between all pairs of trees (summarized as mean or minimum values). |
+| *normalizedSPR*           | Tree comparison  | Given two binary trees, compute the normalized SPR distance, following Ding et al. (2011). |
+| *retrodictNodes*          | Tree comparison  | Given two input trees, create a dataframe containing support values of one tree and clade occurrence  of another tree. |
+| *sharedNodes*             | Tree comparison  | Given two input trees, compare shared clades. The output is (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.  |
+| *summaryTopologicalDist*  | Tree comparison  | Given two sets of trees, compute the number of shared clades, number of unique clades in each tree, Robinson-Foulds, and Cluster Information distance.  |
+| *uniqueNodes*             | Tree comparison  | Given two input trees, identify unique clades. The output is two lists containing unique clades and support values in each tree.  |
+| *mapBranchLength*         | Tree handling    | Given one tree without branch lengths (e.g. strict consensus) and another tree(s) with branch lengths (e.g. MPTs), map the branch lengths from the latter to the former. |
+| *mapSupport*              | Tree handling    | Given one tree with support values (e.g. majority consensus of bootstrap trees) and another tree without support values (e.g. strict consensus of optimal trees), map the support values from the former to the latter. |
+| *filterInvariants*        | Matrix handling  | Given a matrix, delete characters containing only invariants. |
+| *filterMissing*           | Matrix handling  | Given a matrix, delete taxa and/or characters containing only missing data (?). |
+| *splitNoStates*           | Matrix handling  | Given a morphological matrix, split it based on the number of character-states for MK(v) models.
+| *splitOrdFromUnord*       | Matrix handling  | Given a morphological matrix and a list of ordered and unordered characters, split the matrix into two matrices. |
 
 The following examples are designed for users with little experience. If you have questions, send a message using GitHub issues. 
 
