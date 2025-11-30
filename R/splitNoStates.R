@@ -1,6 +1,6 @@
 #' @title splitNoStates
 #' @name splitNoStates
-#' @description Splits a morphological matrix according to the number of character-states. This procedure has been recommended to run phylogenetic analyses with the MK and MKv models (the 'K' refers to the number of states). Khakurel et al. (2024) demonstrated that MK models with high K values can understimate the branch lengths, whereas MK models with small K values can overstimate them. As such, some recent studies have partitioned morphological characters according to their number of states (e.g. Černý & Simonoff 2023).
+#' @description Splits a morphological matrix according to the number of character-states. This procedure has been recommended to run phylogenetic analyses with the MK and MKv models (the 'K' refers to the number of states). Khakurel et al. (2024) demonstrated that MK models with high K values can underestimate the branch lengths, whereas MK models with small K values can overstimate them. As such, some recent studies have partitioned morphological characters according to their number of states (e.g. Černý & Simonoff 2023).
 #' @author Daniel YM Nakamura
 #' @param input Input file (morphological matrix, either loaded previously in R or loaded from a local file).
 #' @param inpu_format To load from a local file: 'nexus' or 'tnt'.

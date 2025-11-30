@@ -4,10 +4,12 @@
 \alias{splitOrdFromUnord}
 \title{splitOrdFromUnord}
 \usage{
-splitOrdFromUnord(input, output_index, list_ordered)
+splitOrdFromUnord(input, input_format, output_index, list_ordered)
 }
 \arguments{
-\item{input}{Input file (concatenated morphological matrix in Nexus format).}
+\item{input}{Input file (concatenated morphological matrix loaded locally or already loaded in R).}
+
+\item{input_format}{To load from a local file: 'nexus' or 'tnt'.}
 
 \item{output_index}{Output index (e.g. if the user specify it as "Desktop/Index", the output files will be "Desktop/Index_ORDERED.nexus" and "Desktop/Index_UNORDERED.nexus")}
 
@@ -18,7 +20,7 @@ Splits a morphological matrix containing ordered and unordered characters into t
 }
 \examples{
 # Example
-splitOrdFromUnord
+splitOrdFromUnord(input="../testdata/048_MORPH_data.nex", output_index = "../testdata/048_MORPH", list_ordered=list_ordered)
 
 }
 \author{

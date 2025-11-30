@@ -4,10 +4,12 @@
 \alias{filterInvariants}
 \title{filterInvariants}
 \usage{
-filterInvariants(input, output_index)
+filterInvariants(input, input_format, output_index)
 }
 \arguments{
-\item{input}{Input file (molecular or morphological matrix in Nexus or already loaded as a matrix object in R).}
+\item{input}{Input file (molecular or morphological matrix loaded locally or already loaded as a matrix object in R).}
+
+\item{input_format}{To load from a local file: 'nexus' or 'tnt'.}
 
 \item{output_index}{Output index (e.g. if the user specify it as "Desktop/Index", the output files will be "Desktop/Index_onlyVARIANTS.nexus")}
 }

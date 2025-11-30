@@ -6,7 +6,7 @@
 
 **RNODE** is an R package to facilitate pre- and postprocessing of phylogenetic analyses, including (1) comparisons of topologies, branch lengths, support values, (2) comparison of DNA sequences, (3) manipulation of cladistic matrices, and (4) manipulation of trees.
 
-Copyright (C) Daniel Y. M. Nakamura 2025
+Copyright (C) Daniel Y. M. Nakamura 2026
 
 ## Cite
 
@@ -28,16 +28,18 @@ The following functions are available in **RNODE**:
 |:--------------------------|:-----------------|:------------|
 | *compareBranchLength*     | Tree comparison  | Given two input trees, compare branch lengths of internal edges (shared clades) and terminal edges (shared leaves). The output is a dataframe with node labels and branch lengths.  |
 | *multiSPR*                | Tree comparison  | Given two sets of binary trees (e.g. MPTs), compute (normalized) SPR distances between two randomly selected trees or between all pairs of trees (summarized as mean or minimum values). |
-| *normalizedSPR*           | Tree comparison  | Given two binary trees, compute the normalized SPR distance, following Ding et al. (2011). |
+| *normalizedSPR*           | Tree comparison  | Given two binary trees, compute the normalized SPR distance using the upper bound from Ding et al. (2011). |
 | *retrodictNodes*          | Tree comparison  | Given two input trees, create a dataframe containing support values of one tree and clade occurrence  of another tree. |
-| *sharedNodes*             | Tree comparison  | Given two input trees, compare shared clades. The output is (1) basic statistics about number of shared clades and support values; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.  |
+| *sharedNodes*             | Tree comparison  | Given two input trees, compare shared clades. The output is (1) basic statistics about the number of shared clades, support values and their correlation; (2) a dataframe with node labels, descendants, and support values of shared clades, which facilitates descriptive and statistical comparisons of clade composition and support between corresponding nodes.  |
 | *summaryTopologicalDist*  | Tree comparison  | Given two sets of trees, compute the number of shared clades, number of unique clades in each tree, Robinson-Foulds, and Cluster Information distance.  |
 | *uniqueNodes*             | Tree comparison  | Given two input trees, identify unique clades. The output is two lists containing unique clades and support values in each tree.  |
 | *mapBranchLength*         | Tree handling    | Given one tree without branch lengths (e.g. strict consensus) and another tree(s) with branch lengths (e.g. MPTs), map the branch lengths from the latter to the former. |
 | *mapSupport*              | Tree handling    | Given one tree with support values (e.g. majority consensus of bootstrap trees) and another tree without support values (e.g. strict consensus of optimal trees), map the support values from the former to the latter. |
+| *rep*                     | Tree handling    | Given one alignment and one tree with Goodman-Bremer support values, compute the ratio of explanatory power (REP). |
+| *findEqualLength*         | Matrix handling  | Given multiple gene alignments, identify gap and gapless files, and write a template of a script considering gap files as unaligned and gapless files as prealigned for POY/PhyG. |
 | *filterInvariants*        | Matrix handling  | Given a matrix, delete characters containing only invariants. |
 | *filterMissing*           | Matrix handling  | Given a matrix, delete taxa and/or characters containing only missing data (?). |
-| *splitNoStates*           | Matrix handling  | Given a morphological matrix, split it based on the number of character-states for MK(v) models.
+| *splitNoStates*           | Matrix handling  | Given a morphological matrix, split it based on the number of character-states for MK(v) models. |
 | *splitOrdFromUnord*       | Matrix handling  | Given a morphological matrix and a list of ordered and unordered characters, split the matrix into two matrices. |
 
 The following examples are designed for users with little experience. If you have questions, send a message using GitHub issues. 
@@ -213,6 +215,7 @@ The function *filterMissing* deletes taxa and/or characters containing only miss
 
 ```
 filterMissing(input="../testdata/test_filterMissing.nexus", 
+              input_format="nexus",
               output_path="../testdata/test_filterMissing",
               missing="both")
 ```
@@ -221,6 +224,7 @@ The function *filterInvariants* deletes invariant characters, which is useful to
 
 ```
 filterInvariants(input="../testdata/015_MORPH_data.nexus",
+                 input_format = "nexus",
                  output_index="../testdata/015_MORPH_data")
 ```
 
@@ -230,13 +234,22 @@ The function *splitOrdFromUnord* splits a morphological matrix into partitions o
 # Data input of list of ordered characters
 list_ordered=c(1, 6, 7, 8, 10, 12, 13, 14, 17, 19, 23, 26, 31, 35, 41, 44, 45, 48, 51, 54, 55, 68, 71, 72, 92, 94, 96, 102, 105, 108, 109, 128, 129, 130, 131, 132, 135, 142, 144, 152, 153, 193)
 
-splitOrdFromUnord(input="../testdata/048_MORPH_data.nex", output_index = "../testdata/048_MORPH", list_ordered=list_ordered)
+splitOrdFromUnord(input="../testdata/048_MORPH_data.nex", 
+                  input_format = "nexus",
+                  output_index = "../testdata/048_MORPH", 
+                  list_ordered=list_ordered)
 ```
 
 The function *splitNoStates* splits characters from a morphological matrix according to their number of character-states. This procedure has been recommended to run phylogenetic analyses with the MK and MKv models (the 'K' refers to the number of states). Khakurel et al. (2024) demonstrated that MK models with high K values can understimate the branch lengths, whereas MK models with small K values can overstimate them. As such, some recent studies have partitioned morphological characters according to their number of states (e.g. Černý & Simonoff 2023).
 
 ```
-plitNoStates(input = "../testdata/015_MORPH_data.nexus", input_format = "nexus", output_index = "../testdata/015_MORPH_data", ambiguity_addState = T, inapplicable_addState = T, log=T, write=T)
+plitNoStates(input = "../testdata/015_MORPH_data.nexus", 
+             input_format = "nexus", 
+             output_index = "../testdata/015_MORPH_data", 
+             ambiguity_addState = T, 
+             inapplicable_addState = T, 
+             log=T, 
+             write=T)
 ```
 
 #### Example 3.2 Dynamic homology
